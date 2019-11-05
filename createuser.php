@@ -65,7 +65,9 @@
                       <option value="n">No</option>
                     </select>
                     <label for="password">Password:</label>
-                    <input class="form-control form-control-sm" id="password" name="password" type="text"/>
+                    <input class="form-control form-control-sm" id="password" name="password1" type="text"/>
+                    <label for="password">Confirm Password:</label>
+                    <input class="form-control form-control-sm" id="password" name="password2" type="text"/>
                     <label for="Notes">Notes:</label>
                     <input class="form-control form-control-sm" id="Notes" name="notes" type="text"/>
                     <button class="btn btn-block btn-lg btn-primary" type="submit">Create User</button>
