@@ -1,0 +1,3 @@
+<?php
+    $userID = $_POST
+?>
