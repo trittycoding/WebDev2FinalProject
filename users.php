@@ -69,6 +69,7 @@
             <td><?=$row['level']?></td>
             <td><?=$row['active']?></td>
             <td><?=$row['lastLogin']?></td>
+            <td><?=$row['notes']?></td>
         </tr>
         <?php endwhile?>
     </tbody>

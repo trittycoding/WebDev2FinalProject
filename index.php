@@ -1,6 +1,4 @@
-<?php
-    
-?>
+<!--Main Landing Page for Final Project Website Travis Taylor-->
 <!DOCTYPE html>
 <html lang="en">
 
