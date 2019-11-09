@@ -30,11 +30,15 @@
         $password = TRIM($password);
         $username = TRIM($username);
 
+
             //If the parameters pass all of the tests, then insert into the database
             if(0 < strlen($fname) && strlen($fname) <=50 && 0 < strlen($lname) 
                 && strlen($lname) <= 100 && $level && 7 < strlen($password) && strlen($password) <= 20
                     && 3 < strlen($username) && strlen($username) <= 20){
                 require('connect.php');
+                
+                //Hashing of the password
+                $password_hashed = password_hash($password, PASSWORD_DEFAULT);
 
                 //Preparing the insert
                 $insert = "INSERT INTO users (level, department, 
@@ -48,7 +52,7 @@
                 $statement->bindValue(':active', $active);
                 $statement->bindValue(':firstName', $fname);
                 $statement->bindValue(':lastName', $lname);
-                $statement->bindValue(':password', $password);
+                $statement->bindValue(':password', $password_hashed);
                 $statement->bindValue(':lastLogin', $lastLogin);
                 $statement->bindValue(':notes', $notes);
                 $statement->bindValue(':username', $username);
