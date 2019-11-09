@@ -35,11 +35,11 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-          <form>
+          <form method='post' action='verifyuser.php'>
             <div class="form-row">
               <div class="col-12 col-md-8s mb-2 mb-md-0">
-                <input type="text" class="form-control form-control-lg" placeholder="Username">
-                <input type="text" class="form-control form-control-lg" placeholder="Password">
+                <input type="text" class="form-control form-control-lg" placeholder="Username" name='username'/>
+                <input type="text" class="form-control form-control-lg" placeholder="Password" name='password'/>
                 <button type="submit" class="btn btn-block btn-lg btn-primary">Log In</button>
               </div>
             </div>
