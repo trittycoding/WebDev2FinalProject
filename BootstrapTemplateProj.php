@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Create Users</title>
+  <title>   </title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -34,33 +34,7 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-          <form method="post" action="insertuser.php">
-            <div class="form-row">
-              <div class="col-12 col-md-4s mb-2 mb-md-0">
-                <h3>Create A User</h3>
-                    <label for="FName">First Name:</label>
-                    <input class="form-control form-control-sm" id="FName" name="FirstName" type="text"/>
-                    <label for="LName">Last Name:</label>
-                    <input class="form-control form-control-sm" id="LName" name="LastName" type="text"/>
-                    <label for="acctlvl">Account Level</label>
-                    <input class="form-control form-control-sm" id="acctlvl" name="Level" type="number" min="1" max="3"/>
-                    <label for="department">Department:</label>
-                    <input class="form-control form-control-sm" id="department" name="department" type="text"/>
-                    <label for="status">Account Is Active?</label>
-                    <select id='active' name='active'>
-                      <option value="y">Yes</option>
-                      <option value="n">No</option>
-                    </select>
-                    <label for="Username">Username:</label>
-                    <input class="form-control form-control-sm" id="Username" name="username" type="text"/>
-                    <label for="password">Password:</label>
-                    <input class="form-control form-control-sm" id="password" name="password" type="text"/>
-                    <label for="Notes">Notes:</label>
-                    <input class="form-control form-control-sm" id="Notes" name="notes" type="text"/>
-                    <button class="btn btn-block btn-lg btn-primary" type="submit">Create User</button>
-              </div>
-            </div>
-          </form>
+
         </div>
       </div>
     </div>

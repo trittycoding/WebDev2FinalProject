@@ -1,7 +1,5 @@
 <?php
     //Grabbing post values from the create user page
-
-    //If department field is not set then set to null
     if(!isset($_POST['department'])){
         $_POST['department'] = null;
         $department = $_POST['department'];
@@ -10,7 +8,6 @@
         $department = filter_input(INPUT_POST, 'department', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     }
 
-    //If notes field is not set then set it to null
     if(!isset($_POST['notes'])){
         $_POST['notes'] = null;
         $notes = $_POST['notes'];
@@ -19,31 +16,30 @@
         $notes = filter_input(INPUT_POST, 'notes', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     }
 
-    //If the required fields are set and both password boxes match
-    if(isset($_POST['FirstName'], $_POST['LastName'], $_POST['Level'], $_POST['active'], $_POST['password1'], $_POST['username']) 
-            && $_POST['password1'] == $_POST['password2']){ 
+    //If the required fields are set
+    if(isset($_POST['FirstName'], $_POST['LastName'], $_POST['Level'], $_POST['active'], $_POST['password'], $_POST['username'])){ 
         $fname = filter_input(INPUT_POST, 'FirstName', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $lname = filter_input(INPUT_POST, 'LastName', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $level = filter_input(INPUT_POST, 'Level', FILTER_VALIDATE_INT);
         $active = filter_input(INPUT_POST, 'active', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $password1 = filter_input(INPUT_POST, 'password1', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $lastLogin = date('Y-m-d h:i:s');
         $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $fname = TRIM($fname);
         $lname = TRIM($lname);
-        $password1 = TRIM($password1);
+        $password = TRIM($password);
         $username = TRIM($username);
 
             //If the parameters pass all of the tests, then insert into the database
             if(0 < strlen($fname) && strlen($fname) <=50 && 0 < strlen($lname) 
-                && strlen($lname) <= 100 && $level && 7 < strlen($password1) && strlen($password1) <= 20
+                && strlen($lname) <= 100 && $level && 7 < strlen($password) && strlen($password) <= 20
                     && 3 < strlen($username) && strlen($username) <= 20){
                 require('connect.php');
 
                 //Preparing the insert
                 $insert = "INSERT INTO users (level, department, 
-                active, firstName, lastName, password1, lastLogin, notes, username) VALUES 
-                (:level, :department, :active, :firstName, :lastName, :password1, 
+                active, firstName, lastName, password, lastLogin, notes, username) VALUES 
+                (:level, :department, :active, :firstName, :lastName, :password, 
                 :lastLogin, :notes, :username)";
                 $statement = $db->prepare($insert);
         
@@ -52,28 +48,18 @@
                 $statement->bindValue(':active', $active);
                 $statement->bindValue(':firstName', $fname);
                 $statement->bindValue(':lastName', $lname);
-                $statement->bindValue(':password1', $password1);
+                $statement->bindValue(':password', $password);
                 $statement->bindValue(':lastLogin', $lastLogin);
                 $statement->bindValue(':notes', $notes);
                 $statement->bindValue(':username', $username);
-                
-                //Add the result to the db and redirect
+        
                 if($statement->execute()){
-                    header("Location: createuser.php");
+                    header("Location: users.php");
                 }
             }
         }
-    
-    //If the above fails validation, output the appropriate error
-    else{
-        //Passwords don't match
-        if($_POST['password1'] != $_POST['password2']){
-            ECHO "Passwords do not match";
-        }
 
-        //Required fields are not filled out
-        if(!isset($_POST['FirstName'], $_POST['LastName'], $_POST['Level'], $_POST['active'], $_POST['password1'], $_POST['username'])){
-            ECHO "Invalid Data: First Name, Last Name, Level, Account Status are required.";
-        }
+    else{
+        ECHO "Invalid Data: First Name, Last Name, Level, Account Status and password are required.";
     }
 ?>
