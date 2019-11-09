@@ -32,7 +32,7 @@
         Welcome to your homepage <?=$name?>
       </span>
       <a class="nav-link" href="#"><?=$username?> <span class="sr-only">(current)</span></a>
-      <a class="btn btn-primary" href="logout.php">Log Out</a>
+      <a class="btn btn-primary btn-med" href="logout.php">Log Out</a>
     </div>
   </nav>
 
@@ -46,12 +46,18 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <a class="btn btn-primary" href="createuser.php" role="button">Create User Entry</a>
-            <a class="btn btn-primary" href="createsoftware.php" role="button">Create Software Entry</a>
-            <a class="btn btn-primary" href="createhardware.php" role="button">Create Hardware Entry</a>
-            <a class="btn btn-primary" href="users.php" role="button">View User Catalog</a>
-            <a class="btn btn-primary" href="software.php" role="button">View Software Catalog</a>
-            <a class="btn btn-primary" href="hardware.php" role="button">View Hardware Catalog</a>
+            <div class="col">
+              <a class="btn btn-primary btn-lg btn-block btn-lg btn-block" href="createuser.php" role="button">Create User Entry</a>
+              <a class="btn btn-primary btn-lg btn-block btn-lg btn-block" href="users.php" role="button">View User Catalog</a>
+            </div>
+            <div class="col">
+              <a class="btn btn-primary btn-lg btn-block" href="createsoftware.php" role="button">Create Software Entry</a>
+              <a class="btn btn-primary btn-lg btn-block" href="software.php" role="button">View Software Catalog</a>
+            </div>
+            <div class="col">
+              <a class="btn btn-primary btn-lg btn-block" href="createhardware.php" role="button">Create Hardware Entry</a>
+              <a class="btn btn-primary btn-lg btn-block" href="hardware.php" role="button">View Hardware Catalog</a>
+            </div>
         </div>
       </div>
     </div>
@@ -66,12 +72,12 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <a class="btn btn-primary" href="createuser.php" role="button">Create User Entry</a>
-            <a class="btn btn-primary" href="createsoftware.php" role="button">Create Software Entry</a>
-            <a class="btn btn-primary" href="createhardware.php" role="button">Create Hardware Entry</a>
-            <a class="btn btn-primary" href="users.php" role="button">View User Catalog</a>
-            <a class="btn btn-primary" href="software.php" role="button">View Software Catalog</a>
-            <a class="btn btn-primary" href="hardware.php" role="button">View Hardware Catalog</a>
+            <a class="btn btn-primary btn-lg btn-block" href="createuser.php" role="button">Create User Entry</a>
+            <a class="btn btn-primary btn-lg btn-block" href="createsoftware.php" role="button">Create Software Entry</a>
+            <a class="btn btn-primary btn-lg btn-block" href="createhardware.php" role="button">Create Hardware Entry</a>
+            <a class="btn btn-primary btn-lg btn-block" href="users.php" role="button">View User Catalog</a>
+            <a class="btn btn-primary btn-lg btn-block" href="software.php" role="button">View Software Catalog</a>
+            <a class="btn btn-primary btn-lg btn-block" href="hardware.php" role="button">View Hardware Catalog</a>
         </div>
       </div>
     </div>
@@ -86,8 +92,8 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <a class="btn btn-primary" href="software.php" role="button">View Software Catalog</a>
-            <a class="btn btn-primary" href="hardware.php" role="button">View Hardware Catalog</a>
+            <a class="btn btn-primary btn-lg btn-block" href="software.php" role="button">View Software Catalog</a>
+            <a class="btn btn-primary btn-lg btn-block" href="hardware.php" role="button">View Hardware Catalog</a>
         </div>
       </div>
     </div>
