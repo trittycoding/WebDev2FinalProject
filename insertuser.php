@@ -1,5 +1,7 @@
 <?php
     //Grabbing post values from the create user page
+
+    //If department field is not set then set to null
     if(!isset($_POST['department'])){
         $_POST['department'] = null;
         $department = $_POST['department'];
@@ -8,6 +10,7 @@
         $department = filter_input(INPUT_POST, 'department', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     }
 
+    //If notes field is not set then set it to null
     if(!isset($_POST['notes'])){
         $_POST['notes'] = null;
         $notes = $_POST['notes'];
@@ -16,7 +19,7 @@
         $notes = filter_input(INPUT_POST, 'notes', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     }
 
-    //If the required fields are set
+    //If the required fields are set and both password boxes match
     if(isset($_POST['FirstName'], $_POST['LastName'], $_POST['Level'], $_POST['active'], $_POST['password1'], $_POST['username']) 
             && $_POST['password1'] == $_POST['password2']){ 
         $fname = filter_input(INPUT_POST, 'FirstName', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -53,14 +56,24 @@
                 $statement->bindValue(':lastLogin', $lastLogin);
                 $statement->bindValue(':notes', $notes);
                 $statement->bindValue(':username', $username);
-        
+                
+                //Add the result to the db and redirect
                 if($statement->execute()){
                     header("Location: createuser.php");
                 }
             }
         }
-
+    
+    //If the above fails validation, output the appropriate error
     else{
-        ECHO "Invalid Data: First Name, Last Name, Level, Account Status and password1 are required.";
+        //Passwords don't match
+        if($_POST['password1'] != $_POST['password2']){
+            ECHO "Passwords do not match";
+        }
+
+        //Required fields are not filled out
+        if(!isset($_POST['FirstName'], $_POST['LastName'], $_POST['Level'], $_POST['active'], $_POST['password1'], $_POST['username'])){
+            ECHO "Invalid Data: First Name, Last Name, Level, Account Status are required.";
+        }
     }
 ?>

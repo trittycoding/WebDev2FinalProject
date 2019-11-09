@@ -1,14 +1,3 @@
-<?php
-    /* Creating a user, provided that the account logged in 
-    is of Admin status i.e. level = 1 in the users database table*/
-    
-    require('connect.php');
-    //Querying for all rows
-    $query = "SELECT MAX(userID)+1 AS NewUserID FROM Users";
-    $statement = $db->prepare($query);
-    $statement->execute();
-    $row = $statement->fetch();
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -49,8 +38,6 @@
             <div class="form-row">
               <div class="col-12 col-md-4s mb-2 mb-md-0">
                 <h3>Create A User</h3>
-                <label for="id">UserID:</label>
-                    <input class="form-control form-control-sm" id="id" name="userID" type="text" value="<?=$row['NewUserID']?>" disabled/>
                     <label for="FName">First Name:</label>
                     <input class="form-control form-control-sm" id="FName" name="FirstName" type="text"/>
                     <label for="LName">Last Name:</label>
@@ -58,12 +45,14 @@
                     <label for="acctlvl">Account Level</label>
                     <input class="form-control form-control-sm" id="acctlvl" name="Level" type="number" min="1" max="3"/>
                     <label for="department">Department:</label>
-                    <input class="form-control form-control-sm" id="department" name="Department" type="text"/>
+                    <input class="form-control form-control-sm" id="department" name="department" type="text"/>
                     <label for="status">Account Is Active?</label>
-                    <select>
+                    <select id='active' name='active'>
                       <option value="y">Yes</option>
                       <option value="n">No</option>
                     </select>
+                    <label for="Username">Username:</label>
+                    <input class="form-control form-control-sm" id="Username" name="username" type="text"/>
                     <label for="password">Password:</label>
                     <input class="form-control form-control-sm" id="password" name="password1" type="text"/>
                     <label for="password">Confirm Password:</label>
