@@ -23,17 +23,8 @@
                 session_start();
                 $_SESSION['username'] = $credentials['username'];
                 $_SESSION['name'] = $credentials['firstName'].' '.$credentials['lastName'];
-                $_SESSION['status'] = $credentials['status'];
-
-                if($credentials['status'] == 1){
-                    header('Location: adminuserindex.php');
-                }
-                elseif($credentials['status' == 2]){
-                    header('Location: manageruserindex.php');
-                }
-                else{
-                    header('Location: regularuserindex.php');
-                }
+                $_SESSION['level'] = $credentials['level'];
+                header('Location: userindex.php');
             }
         }
     }
