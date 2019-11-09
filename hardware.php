@@ -28,7 +28,7 @@
       <!-- Navigation -->
   <nav class="navbar navbar-light bg-light static-top">
     <div class="container">
-      <a class="navbar-brand" href="index.php">Design By The GOAT</a>
+      <a class="navbar-brand" href="userindex.php">Design By The GOAT</a>
       <a class="btn btn-primary" href="logout.php">Log Out</a>
     </div>
   </nav>
