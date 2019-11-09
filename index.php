@@ -29,7 +29,7 @@
   <!-- Navigation -->
   <nav class="navbar navbar-light bg-light static-top">
     <div class="container">
-      <a class="navbar-brand" href="#">Design By The GOAT</a>
+      <a class="navbar-brand" href="index.php">Design By The GOAT</a>
       <a class="btn btn-primary" href="login.php">Log In</a>
     </div>
   </nav>
