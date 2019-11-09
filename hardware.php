@@ -5,6 +5,11 @@
     $query = "SELECT * FROM hardware";
     $statement = $db->prepare($query);
     $statement->execute();
+
+    session_start();
+    $level = $_SESSION['level'];
+    $username = $_SESSION['username'];
+    $name = $_SESSION['name'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,10 +31,14 @@
 
 <body>
       <!-- Navigation -->
-  <nav class="navbar navbar-light bg-light static-top">
+      <nav class="navbar navbar-light bg-light static-top">
     <div class="container">
       <a class="navbar-brand" href="userindex.php">Design By The GOAT</a>
-      <a class="btn btn-primary" href="logout.php">Log Out</a>
+      <span class="navbar-text">
+        Welcome to your homepage <?=$name?>
+      </span>
+      <a class="nav-link" href="#"><?=$username?> <span class="sr-only">(current)</span></a>
+      <a class="btn btn-primary btn-med" href="logout.php">Log Out</a>
     </div>
   </nav>
 
