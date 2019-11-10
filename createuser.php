@@ -1,4 +1,5 @@
 <?php
+  //Creates a user entry for the users table. Only admins have access to this functionality.
   session_start();
   $level = $_SESSION['level'];
   $username = $_SESSION['username'];
