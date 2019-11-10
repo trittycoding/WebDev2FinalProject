@@ -1,6 +1,7 @@
 <?php
+    //Verifies the user identity and logs that person into the system.
     require('connect.php');
-    //print_r($_POST);
+
     //Check to see if the password and username are set in POST
     if(isset($_POST['password'], $_POST['username'])){
         $username_input = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -14,7 +15,7 @@
         $credentials = $statement->fetch();
         $account_status = $credentials['active'];
 
-        //If query doesn't return null, then compare the passwords
+        //If query doesn't return null and account is active, then compare the passwords
         if($credentials != null && $account_status == 'y'){
             $password_db = $credentials['password'];
 
@@ -26,9 +27,22 @@
                 $_SESSION['level'] = $credentials['level'];
                 header('Location: userindex.php');
             }
+
+            //Passwords do not match
+            else{
+                ECHO "The password entered do not match our records. Press the back button on your browser to re-try.";
+            }
         }
-    }
-    else{
-        header('Location: failedlogin.php');
+
+        //Account query doesn't return null but account status is set to inactive
+        elseif($credentials != null && $account_status == 'n'){
+            ECHO "<p> This account is currently deactivated. Contact your system administrator for reactivation. </p>";
+            ECHO "<p> Press the back button on your browser to log in with a different account. </p>";
+        }
+
+        //Non-Existant Account
+        else{
+            ECHO "Account does not exist. Press the back button on your browser to log in with a valid account.";
+        }
     }
 ?>
