@@ -92,7 +92,11 @@
 
         <?php while($row = $statement2->fetch()):?>
         <tr>
+          <?php if($level == 1):?>
             <td><a href="editsoftware.php?softwareID=<?=$row['softwareID']?>"><?=$row['softwareID']?></a></td>
+          <?php else:?>
+              <td><?=$row['softwareID']?></td>
+          <?php endif?>
             <td><?=$row['licenseKey']?></td>
             <td><?=$row['version']?></td>
             <td><?=$row['publisher']?></td>

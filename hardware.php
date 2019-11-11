@@ -88,7 +88,11 @@
 
         <?php while($row = $statement2->fetch()):?>
         <tr>
-            <td><a href="edithardware.php?hardwareID=<?=$row['hardwareID']?>"><?=$row['hardwareID']?></a></td>
+          <?php if($level == 1):?>
+              <td><a href="edithardware.php?hardwareID=<?=$row['hardwareID']?>"><?=$row['hardwareID']?></a></td>
+          <?php else:?>
+              <td><?=$row['hardwareID']?></td>
+          <?php endif?>
             <td><?=$row['serialNum']?></td>
             <td><?=$row['make']?></td>
             <td><?=$row['description']?></td>
