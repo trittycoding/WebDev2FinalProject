@@ -5,6 +5,9 @@
     $username = $_SESSION['username'];
     $name = $_SESSION['name'];
 
+    //Error msg if the user does not have clearance to this page
+    $error = "You do not have clearance to view this page. Press back on your browser to return to the previous page.";
+
     //Id of entry is passed over via GET
     $id = $_GET['softwareID'];
     $id = filter_var($id, FILTER_SANITIZE_STRING);
@@ -51,6 +54,10 @@
       <a class="btn btn-primary btn-med" href="logout.php">Log Out</a>
     </div>
   </nav>
+
+  <?php if($level != 1):?>
+    <p><?=$error?></p>
+  <?php else:?>
 
   <!-- Masthead -->
   <header class="masthead text-white text-center">
@@ -154,6 +161,7 @@
       </div>
     </div>
   </footer>
+  <?php endif?>
 
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>
