@@ -30,7 +30,6 @@
         $level = filter_input(INPUT_POST, 'Level', FILTER_VALIDATE_INT);
         $active = filter_input(INPUT_POST, 'active', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $lastLogin = date('Y-m-d h:i:s');
         $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $fname = TRIM($fname);
         $lname = TRIM($lname);
@@ -49,7 +48,7 @@
 
                 //Preparing the insert
                 $update = "UPDATE users SET level = :level, department = :department, active = :active, 
-                firstName = :firstName, lastName = :lastName, password = :password, lastLogin = :lastLogin, 
+                firstName = :firstName, lastName = :lastName, password = :password,
                 notes = :notes, username = :username WHERE userID = :userID";
 
                 $statement = $db->prepare($update);
@@ -60,7 +59,6 @@
                 $statement->bindValue(':firstName', $fname);
                 $statement->bindValue(':lastName', $lname);
                 $statement->bindValue(':password', $password_hashed);
-                $statement->bindValue(':lastLogin', $lastLogin);
                 $statement->bindValue(':notes', $notes);
                 $statement->bindValue(':username', $username);
         

@@ -88,6 +88,7 @@
                     <label for="Notes">Notes:</label>
                     <input class="form-control form-control-sm" id="Notes" name="notes" type="text" value="<?=$row['notes']?>"/>
                     <button class="btn btn-block btn-lg btn-primary" type="submit">Update User</button>
+                    <button class="btn btn-block btn-lg btn-danger" type="submit" formaction="deleteuser.php?userID=<?=$row['userID']?>">Delete User</button>
               </div>
             </div>
           </form>

@@ -14,6 +14,8 @@
         $statement->execute();
         $credentials = $statement->fetch();
         $account_status = $credentials['active'];
+        $row = $statement->fetch();
+        $id = $row['userID'];
 
         //If query doesn't return null and account is active, then compare the passwords
         if($credentials != null && $account_status == 'y'){
@@ -25,6 +27,16 @@
                 $_SESSION['username'] = $credentials['username'];
                 $_SESSION['name'] = $credentials['firstName'].' '.$credentials['lastName'];
                 $_SESSION['level'] = $credentials['level'];
+
+                //Update the last login column on the users table since the user has successfully logged in
+                $lastLogin = date('Y-m-d h:i:s');
+                $update = "UPDATE users SET lastLogin = :lastLogin WHERE userID = :userID";
+                $updateLoginStatement = $db->prepare($update);
+                $updateLoginStatement->bindValue(':userID', $id, PDO::PARAM_INT);
+                $updateLoginStatement->bindValue(':lastLogin', $lastLogin);
+                $updateLoginStatement->execute();
+                
+                //Redirect the logged in user to their homepage
                 header('Location: userindex.php');
             }
 
