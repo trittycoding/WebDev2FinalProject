@@ -1,40 +1,31 @@
 <?php
     require('connect.php');
-
-      //Current page number of results
-      if(isset($_GET['page'])){
-        $page = $_GET['page'];
-      }
-      else{
-        $page = 1;
-      }
-
-    $query = "SELECT * FROM software";
-    $statement = $db->prepare($query);
-    $statement->execute();
-
-    //Pagination variables
-    $page_limit = 5;
-    $result_count = $statement->rowCount();
-    $page_total = ceil($result_count/$page_limit);
-    $start_limit = ($page-1)*$page_limit;
-
-    //Executing query to determine the amount of data
-    $query2 = "SELECT * FROM software ORDER BY softwareID LIMIT $start_limit, $page_limit";
-    $statement2 = $db->prepare($query2);
-    $statement2->execute();
-
+    //Creates a user entry for the users table. Only admins have access to this functionality.
     session_start();
     $level = $_SESSION['level'];
     $username = $_SESSION['username'];
     $name = $_SESSION['name'];
+
+    //GET value for username passed through
+    $username_passed = $_GET['username'];
+
+    $query = "SELECT * FROM users WHERE username = :username";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':username', $username_passed);
+    $statement->execute();
+    $row = $statement->fetch();
+
+    if($row == null){
+        ECHO "Error: Query returned no results, press the back button on your browser to view the hardware catalog.";
+    }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Software</title>
+  <title>Edit User</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -68,77 +59,42 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <h1>Created Software</h1>
+          <form method="post" action="updateuser.php?userID=<?=$row['userID']?>">
+            <div class="form-row">
+              <div class="col-12 col-md-4s mb-2 mb-md-0">
+                <h3>Create A User</h3>
+                    <label for="FName">First Name:</label>
+                    <input class="form-control form-control-sm" id="FName" name="FirstName" type="text" value="<?=$row['firstName']?>"/>
+                    <label for="LName">Last Name:</label>
+                    <input class="form-control form-control-sm" id="LName" name="LastName" type="text" value="<?=$row['lastName']?>"/>
+                    <label for="acctlvl">Account Level</label>
+                    <input class="form-control form-control-sm" id="acctlvl" name="Level" type="number" min="1" max="3" value="<?=$row['level']?>"/>
+                    <label for="department">Department:</label>
+                    <input class="form-control form-control-sm" id="department" name="department" type="text" value="<?=$row['department']?>"/>
+                    <label for="status">Account Is Active?</label>
+                    <select id='active' name='active'>
+                        <?php if($row['active'] == 'y'):?>
+                            <option value="y" selected>Yes</option>
+                            <option value="n">No</option>
+                        <?php else:?>
+                            <option value="y">Yes</option>
+                            <option value="n" selected>No</option>
+                        <?php endif?>
+                    </select>
+                    <label for="Username">Username:</label>
+                    <input class="form-control form-control-sm" id="Username" name="username" type="text" value="<?=$row['username']?>"/>
+                    <label for="password">Password:</label>
+                    <input class="form-control form-control-sm" id="password" name="password" type="text" value="<?=$row['password']?>"/>
+                    <label for="Notes">Notes:</label>
+                    <input class="form-control form-control-sm" id="Notes" name="notes" type="text" value="<?=$row['notes']?>"/>
+                    <button class="btn btn-block btn-lg btn-primary" type="submit">Update User</button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </header>
-
-<<table class="table table-dark">
-    <tbody>
-        <tr>
-            <th>Catalog ID:</th>
-            <th>License Key:</th>
-            <th>Version:</th>
-            <th>Publisher:</th>
-            <th>Description:</th>
-            <th>Subscription:</th>
-            <th>Cost:</th>
-            <th>Subscription Cycle:</th>
-            <th>Location:</th>
-            <th>Expiry:</th>
-            <th>Possession:</th>
-        </tr>
-
-        <?php while($row = $statement2->fetch()):?>
-        <tr>
-            <td><a href="editsoftware.php?softwareID=<?=$row['softwareID']?>"><?=$row['softwareID']?></a></td>
-            <td><?=$row['licenseKey']?></td>
-            <td><?=$row['version']?></td>
-            <td><?=$row['publisher']?></td>
-            <td><?=$row['description']?></td>
-            <td><?=$row['subscription']?></td>
-            <td><?=$row['cost']?></td>
-            <td><?=$row['subscriptionCycle']?></td>
-            <td><?=$row['location']?></td>
-            <td><?=$row['expiry']?></td>
-            <td><?=$row['assignedTo']?></td>
-        </tr>
-        <?php endwhile?>
-    </tbody>
-</table>
-
-<!--Pagination implementation-->
-<nav aria-label="Page navigation">
-  <ul class="pagination">
-
-  <?php if($page == 1):?>
-      <li class="page-item disabled">
-  <?php else:?>
-      <li class="page-item enabled">
-  <?php endif?>
-
-      <a class="page-link" href="software.php?page=<?=$page-1?>" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-        <span class="sr-only">Previous</span>
-      </a>
-    </li>
-    <li class="page-item active"><a class="page-link" href="users.php?page=<?=$page?>"></a><?=$page?></li>
-    <li class="page-item"><a class="page-link" href="users.php?page=<?=$page+1?>"></a><?=$page+1?></li>
-    <li class="page-item">
-
-    <?php if($page == $page_total):?>
-      <li class="page-item disabled">
-    <?php else:?>
-        <li class="page-item enabled">
-    <?php endif?>
-      <a class="page-link" href="software.php?page=<?=$page+1?>" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-        <span class="sr-only">Next</span>
-      </a>
-    </li>
-  </ul>
-</nav>
 
   <!-- Footer -->
   <footer class="footer bg-light">

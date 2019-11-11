@@ -80,9 +80,9 @@
 <<table class="table table-hover table-dark">
     <tbody>
         <tr>
+            <th>Username:</th>
             <th>First Name:</th>
             <th>Last Name:</th>
-            <th>Username:</th>
             <th>Department:</th>
             <th>Account Level:</th>
             <th>Account Status</th>
@@ -92,9 +92,9 @@
 
         <?php while($row = $statement2->fetch()):?>
         <tr>
+            <td><a href="edituser.php?username=<?=$row['username']?>"><?=$row['username']?></td>
             <td><?=$row['firstName']?></td>
             <td><?=$row['lastName']?></td>
-            <td><?=$row['username']?></td>
             <td><?=$row['department']?></td>
             <td><?=$row['level']?></td>
             <td><?=$row['active']?></td>
