@@ -1,40 +1,33 @@
 <?php
     require('connect.php');
 
-    //Current page number of results
-    if(isset($_GET['page'])){
-      $page = $_GET['page'];
-    }
-    else{
-      $page = 1;
-    }
-
-    $query = "SELECT * FROM hardware";
-    $statement = $db->prepare($query);
-    $statement->execute();
-
-    //Pagination variables
-    $page_limit = 5;
-    $result_count = $statement->rowCount();
-    $page_total = ceil($result_count/$page_limit);
-    $start_limit = ($page-1)*$page_limit;
-
-    //Executing query to determine the amount of data
-    $query2 = "SELECT * FROM hardware ORDER BY hardwareID LIMIT $start_limit, $page_limit";
-    $statement2 = $db->prepare($query2);
-    $statement2->execute();
-
+    //Session Variables 
     session_start();
     $level = $_SESSION['level'];
     $username = $_SESSION['username'];
     $name = $_SESSION['name'];
+
+    //Id of entry is passed over via GET
+    $id = $_GET['hardwareID'];
+    $id = filter_var($id, FILTER_SANITIZE_STRING);
+
+    $query = "SELECT * FROM Hardware WHERE hardwareID = :hardwareID";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':hardwareID', $id, PDO::PARAM_INT);
+    $statement->execute();
+    $row = $statement->fetch();
+
+    if($row == null){
+        ECHO "Error: Query returned no results, press the back button on your browser to view the hardware catalog.";
+    }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Hardware</title>
+  <title>Edit Hardware Entry</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -68,70 +61,28 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <h1>Created Hardware</h1>
+        <form method="post" action="updatehardware.php?hardwareID=<?=$row['hardwareID']?>">
+            <div class="form-row">
+              <div class="col-12 col-md-4s mb-2 mb-md-0">
+                <h3>Hardware Edit Wizard</h3>
+                    <label for="serial">Serial Number:</label>
+                    <input class="form-control form-control-sm" id="serial" name="serial" type="text" value="<?=$row['serialNum']?>"/>
+                    <label for="make">Make:</label>
+                    <input class="form-control form-control-sm" id="make" name="make" type="text" value="<?=$row['make']?>"/>
+                    <label for="description">Description:</label>
+                    <input class="form-control form-control-sm" id="description" name="description" type="text" value="<?=$row['description']?>"/>
+                    <label for="cost">Cost:</label>
+                    <input class="form-control form-control-sm" id="cost" name="cost" type="text" value="<?=$row['cost']?>"/>
+                    <label for="notes">Notes:</label>
+                    <input class="form-control form-control-sm" id="notes" name="notes" type="text" value="<?=$row['notes']?>"/>
+                    <button class="btn btn-block btn-lg btn-primary" type="submit">Update Entry</button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </header>
-
-<<table class="table table-dark">
-    <tbody>
-        <tr>
-            <th>Catalog ID:</th>
-            <th>Serial Number:</th>
-            <th>Make:</th>
-            <th>Description:</th>
-            <th>Cost:</th>
-            <th>Notes:</th>
-            <th>Possession:</th>
-        </tr>
-
-        <?php while($row = $statement2->fetch()):?>
-        <tr>
-            <td><a href="edithardware.php?hardwareID=<?=$row['hardwareID']?>"><?=$row['hardwareID']?></a></td>
-            <td><?=$row['serialNum']?></td>
-            <td><?=$row['make']?></td>
-            <td><?=$row['description']?></td>
-            <td><?=$row['cost']?></td>
-            <td><?=$row['notes']?></td>
-            <td><?=$row['assignedTo']?></td>
-        </tr>
-        <?php endwhile?>
-    </tbody>
-</table>
-
-<!--Pagination implementation-->
-<nav aria-label="Page navigation">
-  <ul class="pagination">
-
-  <?php if($page == 1):?>
-      <li class="page-item disabled">
-  <?php else:?>
-      <li class="page-item enabled">
-  <?php endif?>
-
-      <a class="page-link" href="hardware.php?page=<?=$page-1?>" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-        <span class="sr-only">Previous</span>
-      </a>
-    </li>
-    <li class="page-item active"><a class="page-link" href="users.php?page=<?=$page?>"></a><?=$page?></li>
-    <li class="page-item"><a class="page-link" href="users.php?page=<?=$page+1?>"></a><?=$page+1?></li>
-    <li class="page-item">
-
-    <?php if($page == $page_total):?>
-      <li class="page-item disabled">
-    <?php else:?>
-        <li class="page-item enabled">
-    <?php endif?>
-      <a class="page-link" href="hardware.php?page=<?=$page+1?>" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-        <span class="sr-only">Next</span>
-      </a>
-    </li>
-  </ul>
-</nav>
-
 
   <!-- Footer -->
   <footer class="footer bg-light">
