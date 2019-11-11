@@ -99,6 +99,7 @@
                     <label for="expiry">Expiry of License/Subscription:</label>
                     <input class="form-control form-control-sm" id="expiry" name="expiry" type="date" value="<?=$row['date']?>"/>
                     <button class="btn btn-block btn-lg btn-primary" type="submit">Update Entry</button>
+                    <button class="btn btn-block btn-lg btn-danger" type="submit" formaction="deletesoftware.php?softwareID=<?=$row['softwareID']?>">Delete Entry</button>
               </div>
             </div>
           </form>

@@ -76,6 +76,7 @@
                     <label for="notes">Notes:</label>
                     <input class="form-control form-control-sm" id="notes" name="notes" type="text" value="<?=$row['notes']?>"/>
                     <button class="btn btn-block btn-lg btn-primary" type="submit">Update Entry</button>
+                    <button class="btn btn-block btn-lg btn-danger" type="submit" formaction="deletehardware.php?hardwareID=<?=$row['hardwareID']?>">Delete Entry</button>
               </div>
             </div>
           </form>
