@@ -1,10 +1,28 @@
 <?php
     require('connect.php');
-    /*$query = "SELECT level, department, active, firstName, lastName, password, 
-    TO_CHAR(lastLogin) AS login, notes, username FROM users";*/
+
+    //Current page number of results
+    if(isset($_GET['page'])){
+      $page = $_GET['page'];
+    }
+    else{
+      $page = 1;
+    }
+
     $query = "SELECT * FROM hardware";
     $statement = $db->prepare($query);
     $statement->execute();
+
+    //Pagination variables
+    $page_limit = 5;
+    $result_count = $statement->rowCount();
+    $page_total = ceil($result_count/$page_limit);
+    $start_limit = ($page-1)*$page_limit;
+
+    //Executing query to determine the amount of data
+    $query2 = "SELECT * FROM hardware ORDER BY hardwareID LIMIT $start_limit, $page_limit";
+    $statement2 = $db->prepare($query2);
+    $statement2->execute();
 
     session_start();
     $level = $_SESSION['level'];
@@ -68,7 +86,7 @@
             <th>Possession:</th>
         </tr>
 
-        <?php while($row = $statement->fetch()):?>
+        <?php while($row = $statement2->fetch()):?>
         <tr>
             <td><?=$row['hardwareID']?></td>
             <td><?=$row['serialNum']?></td>
@@ -81,6 +99,38 @@
         <?php endwhile?>
     </tbody>
 </table>
+
+<!--Pagination implementation-->
+<nav aria-label="Page navigation">
+  <ul class="pagination">
+
+  <?php if($page == 1):?>
+      <li class="page-item disabled">
+  <?php else:?>
+      <li class="page-item enabled">
+  <?php endif?>
+
+      <a class="page-link" href="hardware.php?page=<?=$page-1?>" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    <li class="page-item active"><a class="page-link" href="users.php?page=<?=$page?>"></a><?=$page?></li>
+    <li class="page-item"><a class="page-link" href="users.php?page=<?=$page+1?>"></a><?=$page+1?></li>
+    <li class="page-item">
+
+    <?php if($page == $page_total):?>
+      <li class="page-item disabled">
+    <?php else:?>
+        <li class="page-item enabled">
+    <?php endif?>
+      <a class="page-link" href="hardware.php?page=<?=$page+1?>" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
 
 
   <!-- Footer -->

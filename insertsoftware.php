@@ -51,8 +51,8 @@
         $publisher = TRIM($publisher);
 
         if(0 < strlen($key) && strlen($key) <= 50 && 
-            0 < strlen($publisher) && strlen($publisher) <= 20 &&
-            0 < strlen($description) && strlen($description) <= 20){
+            0 < strlen($publisher) && strlen($publisher) <= 40 &&
+            0 < strlen($description) && strlen($description) <= 40){
                 require('connect.php');
 
                 $insert = "INSERT INTO software (licenseKey, version, publisher, description, subscription, cost, subscriptionCycle, location, expiry, assignedTo) VALUES

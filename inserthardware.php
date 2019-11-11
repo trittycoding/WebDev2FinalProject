@@ -7,6 +7,7 @@
     }
     else{
         $serial = filter_input(INPUT_POST, 'serial', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $serial = TRIM($serial);
     }
 
     if(!isset($_POST['cost'])){
@@ -15,6 +16,7 @@
     }
     else{
         $cost = filter_input(INPUT_POST, 'cost', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $cost = TRIM($cost);
         $cost = filter_input(INPUT_POST, 'cost', FILTER_VALIDATE_FLOAT);
     }
 
@@ -24,6 +26,7 @@
     }
     else{
         $notes = filter_input(INPUT_POST, 'notes', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $notes = TRIM($notes);
     }
 
     //Required Fields

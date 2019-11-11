@@ -50,8 +50,6 @@
                 <h3>Hardware Entry Wizard</h3>
                     <label for="serial">Serial Number:</label>
                     <input class="form-control form-control-sm" id="serial" name="serial" type="text"/>
-                    <label for="imei">IMEI (Cellular Devices):</label>
-                    <input class="form-control form-control-sm" id="imei" name="imei" type="text"/>
                     <label for="make">Make:</label>
                     <input class="form-control form-control-sm" id="make" name="make" type="text"/>
                     <label for="description">Description:</label>
