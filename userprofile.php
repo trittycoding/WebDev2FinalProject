@@ -1,4 +1,5 @@
 <?php
+    //User profile page - allows user to change bio and profile picture
     require('connect.php');
     session_start();
     $level = $_SESSION['level'];
