@@ -1,8 +1,19 @@
 <?php
-  session_start();
-  $level = $_SESSION['level'];
-  $username = $_SESSION['username'];
-  $name = $_SESSION['name'];
+    require('connect.php');
+    session_start();
+    $level = $_SESSION['level'];
+    $username = $_SESSION['username'];
+    $name = $_SESSION['name'];
+
+    $query = "SELECT * FROM users WHERE username = :username";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':username', $username);
+    $statement->execute();
+    $row = $statement->fetch();
+
+    $firstlast = strtolower(substr($row['firstName'], 0, 1).$row['lastName']);
+    $department = $row['department'];
+
 ?>
 
 <!DOCTYPE html>
@@ -31,13 +42,11 @@
       <span class="navbar-text">
         Welcome to your homepage <?=$name?>
       </span>
-      <a class="nav-link" href="userprofile.php"><?=$username?> <span class="sr-only">(current)</span></a>
+      <a class="nav-link" href="userindex.php"><?=$username?> <span class="sr-only">(current)</span></a>
       <a class="btn btn-primary btn-med" href="logout.php">Log Out</a>
     </div>
   </nav>
 
-  <!--Admin homepage-->
-  <?php if($level == 1):?>
   <!-- Masthead -->
   <header class="masthead text-white text-center">
     <div class="overlay"></div>
@@ -46,61 +55,48 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <div class="col">
-              <a class="btn btn-primary btn-lg btn-block btn-lg btn-block" href="createuser.php" role="button">Create User Entry</a>
-              <a class="btn btn-primary btn-lg btn-block btn-lg btn-block" href="users.php" role="button">View User Catalog</a>
-              <a class="btn btn-primary btn-lg btn-block" href="createsoftware.php" role="button">Create Software Entry</a>
-              <a class="btn btn-primary btn-lg btn-block" href="software.php" role="button">View Software Catalog</a>
-              <a class="btn btn-primary btn-lg btn-block" href="createhardware.php" role="button">Create Hardware Entry</a>
-              <a class="btn btn-primary btn-lg btn-block" href="hardware.php" role="button">View Hardware Catalog</a>
-            </div>
+            <h1>Edit User Profile</h1>
         </div>
       </div>
     </div>
   </header>
 
-  <!--Manager's homepage-->
-  <?php elseif($level == 2):?>
-    <header class="masthead text-white text-center">
-    <div class="overlay"></div>
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-9 mx-auto">
-        </div>
-        <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <div class="col">
-              <a class="btn btn-primary btn-lg btn-block" href="createsoftware.php" role="button">Create Software Entry</a>
-              <a class="btn btn-primary btn-lg btn-block" href="createhardware.php" role="button">Create Hardware Entry</a>
-              <a class="btn btn-primary btn-lg btn-block" href="software.php" role="button">View Software Catalog</a>
-              <a class="btn btn-primary btn-lg btn-block" href="hardware.php" role="button">View Hardware Catalog</a>
-            </div>
-        </div>
-      </div>
-    </div>
-  </header>
 
-  <!--Regular user homepage-->
-  <?php elseif($level == 3):?>
-    <header class="masthead text-white text-center">
-    <div class="overlay"></div>
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-9 mx-auto">
-        </div>
-        <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <div class="col">
-              <a class="btn btn-primary btn-lg btn-block" href="software.php" role="button">View Software Catalog</a>
-              <a class="btn btn-primary btn-lg btn-block" href="hardware.php" role="button">View Hardware Catalog</a>
-            </div>
-        </div>
-      </div>
-    </div>
-    </header>
+<!--Form to edit user profile-->
+<div class="mx-auto" style="width: 1000px;">
 
-  <!--Throw an error message if unexpected occurs-->
-  <?php else:?>
-  <?='UNKNOWN ERROR ON USERINDEX.PHP'?>
-  <?php endif?>
+<form method="post" action="profilepicupload.php">
+  <div class="form-group row">
+    <label for="staticEmail" class="col-sm-2 col-form-label">Email:</label>
+        <div class="col-sm-10">
+        <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="<?=$firstlast?>@designbythegoat.com">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="staticDpt" class="col-sm-2 col-form-label">Department:</label>
+        <div class="col-sm-10">
+             <input type="text" readonly class="form-control-plaintext" id="staticDpt" value="<?=$department?>">
+        </div>
+  </div>
+
+  <div class="form-group row">
+    <label for="inputPicture" class="col-sm-2 col-form-label">Profile Picture:</label>
+    <div class="col-sm-4">
+      <input type="file" class="form-control" id="inputPicture" placeholder="Click to upload a file">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="profileBio">Example textarea</label>
+    <div class="col-sm-6">
+        <textarea class="form-control" id="profileBio" rows="3"></textarea>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Update Profile</button>
+</form>
+</div>
 
   <!-- Footer -->
   <footer class="footer bg-light">

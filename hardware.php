@@ -1,4 +1,5 @@
 <?php
+    //
     require('connect.php');
 
     //Current page number of results
