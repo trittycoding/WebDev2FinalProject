@@ -1,14 +1,9 @@
 <?php 
-    require('connect.php');
-    session_start();
-    $level = $_SESSION['level'];
-    $username = $_SESSION['username'];
-    $name = $_SESSION['name'];
-
-    include 'php-image-resize-master\lib\ImageResize.php';
-    include 'php-image-resize-master\lib\ImageResizeException.php';
+    /*include('php-image-resize-master\lib\ImageResize.php');
+    include('php-image-resize-master\lib\ImageResizeException.php');
     use \Gumlet\ImageResize;
-    use \Gumlet\ImageResizeException;
+    use \Gumlet\ImageResizeException;*/
+
     //Constants include DIRECTORY_SEPARATOR, PATHINFO_EXTENSION
     //Special methods - dirname, basename, join, getimagesize, pathinfo, in_array, move_upload_file
     
@@ -49,6 +44,14 @@
 
     //If the image is set
     if(isset($_FILES['image'], $_POST['bio'])){
+
+        require('connect.php');
+        session_start();
+        $level = $_SESSION['level'];
+        $username = $_SESSION['username'];
+        $name = $_SESSION['name'];
+        print_r($_POST);
+        
         //Bio variable
         $bio = filter_input(INPUT_POST, 'bio', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $bio = TRIM($bio);
@@ -62,7 +65,7 @@
         if(validate_image($temp_path, $new_path)){
             move_uploaded_file($temp_path, $new_path);
 
-            $image_med = new ImageResize("Uploads/{$uploaded_file}");
+            /*$image_med = new ImageResize("Uploads/{$uploaded_file}");
             $image_med->resizeToWidth(400);
             $image_med->save("Uploads/{$uploaded_file}_med.{$uploaded_file}");
 
@@ -74,16 +77,19 @@
             $new_path_thumb = upload_pathway($image_thumb);
 
             move_uploaded_file($temp_path, $new_path_med);
-            move_uploaded_file($temp_path, $new_path_thumb);
+            move_uploaded_file($temp_path, $new_path_thumb);*/
             
-            $query = "UPDATE users SET profilePicPath = :profilePicPath, Bio = :bio WHERE username = :username";
+            $query = "UPDATE users SET profilePicPath = :profilePicPath, Bio = :Bio WHERE username = :username";
             $statement = $db->prepare($query);
-            $statement->bindValue(':profilePicPath', $new_path_thumb);
-            $statement->bindValue(':bio', $bio);
+            $statement->bindValue(':profilePicPath', $new_path);
+            $statement->bindValue(':Bio', $bio);
             $statement->bindValue(':username', $username);
-            $statement->execute();
-            
-            header('Location: userindex.php');
+            if($statement->execute()){
+                header('Location: userindex.php');
+            }
+            else{
+                ECHO 'Profile update failed, press the back button on your browser to re-try.';
+            }
         }
         else {
             ECHO "Invalid data: please press back on your browser to try again.";
