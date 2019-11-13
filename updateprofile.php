@@ -1,5 +1,10 @@
 <?php 
     require('connect.php');
+    session_start();
+    $level = $_SESSION['level'];
+    $username = $_SESSION['username'];
+    $name = $_SESSION['name'];
+
     include 'php-image-resize-master\lib\ImageResize.php';
     include 'php-image-resize-master\lib\ImageResizeException.php';
     use \Gumlet\ImageResize;
@@ -42,10 +47,12 @@
     }
 
 
-    
-
     //If the image is set
-    if(isset($_FILES['image'])){
+    if(isset($_FILES['image'], $_POST['bio'])){
+        //Bio variable
+        $bio = filter_input(INPUT_POST, 'bio', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $bio = TRIM($bio);
+
         //Compare the temp vs new paths
         $temp_path = $_FILES['image']['tmp_name'];
         $uploaded_file = $_FILES['image']['name'];
@@ -69,9 +76,11 @@
             move_uploaded_file($temp_path, $new_path_med);
             move_uploaded_file($temp_path, $new_path_thumb);
             
-            $query = "UPDATE users SET profilePicPath = :profilePicPath";
+            $query = "UPDATE users SET profilePicPath = :profilePicPath, Bio = :bio WHERE username = :username";
             $statement = $db->prepare($query);
             $statement->bindValue(':profilePicPath', $new_path_thumb);
+            $statement->bindValue(':bio', $bio);
+            $statement->bindValue(':username', $username);
             $statement->execute();
             
             header('Location: userindex.php');

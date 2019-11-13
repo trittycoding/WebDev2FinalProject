@@ -65,7 +65,7 @@
 
 <!--Form to edit user profile-->
   <div class="container">
-        <form method="post" action="updatebio.php">
+        <form method="post" action="updateprofile.php">
           <div class="form-group row">
             <label for="staticEmail" class="col-sm-2 col-form-label">Email:</label>
             <div class="form-group row">
@@ -91,7 +91,7 @@
             <label for="profileBio">Bio:</label>
           </div>
               <div class="form-group row">
-                <textarea class="form-control" id="profileBio" rows="3"></textarea>
+                <textarea class="form-control" id="profileBio" rows="3" name="bio"></textarea>
               </div>
 
           <button type="submit" class="btn btn-primary">Update Profile</button>
