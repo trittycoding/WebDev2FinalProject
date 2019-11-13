@@ -31,6 +31,7 @@
       <span class="navbar-text">
         Welcome to your homepage <?=$name?>
       </span>
+      <img class="img-tumbnail rounded mx-auto d-block" src="" alt="">
       <a class="nav-link" href="userprofile.php"><?=$username?> <span class="sr-only">(current)</span></a>
       <a class="btn btn-primary btn-med" href="logout.php">Log Out</a>
     </div>

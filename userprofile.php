@@ -64,35 +64,40 @@
 
 
 <!--Form to edit user profile-->
-<div class="container">
-  <div class="row">
-    <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-        <form method="post" action="profilepicupload.php">
+  <div class="container">
+        <form method="post" action="updatebio.php">
           <div class="form-group row">
             <label for="staticEmail" class="col-sm-2 col-form-label">Email:</label>
-                <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="<?=$firstlast?>@designbythegoat.com">
+            <div class="form-group row">
+              <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="<?=$firstlast?>@designbythegoat.com">
             </div>
+          </div>
 
             <div class="form-group row">
                 <label for="staticDpt" class="col-sm-2 col-form-label">Department:</label>
+                <div class="form-group row">
                     <input type="text" readonly class="form-control-plaintext" id="staticDpt" value="<?=$department?>">
+                </div>
           </div>
 
           <div class="form-group row">
             <label for="inputPicture" class="col-sm-2 col-form-label">Profile Picture:</label>
-              <input type="file" class="form-control" id="inputPicture" placeholder="Click to upload a file">
+              <div class="form-group row">
+                <input type="file" class="form-control" id="inputPicture" placeholder="Click to upload a file">
+              </div>
           </div>
 
           <div class="form-group row">
             <label for="profileBio">Bio:</label>
-                <textarea class="form-control" id="profileBio" rows="3"></textarea>
           </div>
+              <div class="form-group row">
+                <textarea class="form-control" id="profileBio" rows="3"></textarea>
+              </div>
 
           <button type="submit" class="btn btn-primary">Update Profile</button>
         </form>
     </div>
-  </div>
-</div>
+
 
   <!-- Footer -->
   <footer class="footer bg-light">
