@@ -27,6 +27,7 @@
                 $_SESSION['username'] = $credentials['username'];
                 $_SESSION['name'] = $credentials['firstName'].' '.$credentials['lastName'];
                 $_SESSION['level'] = $credentials['level'];
+                $_SESSION['image'] = $credentials['image'];
 
                 //Update the last login column on the users table since the user has successfully logged in
                 $lastLogin = date('Y-m-d h:i:s');
