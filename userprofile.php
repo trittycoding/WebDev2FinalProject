@@ -65,7 +65,7 @@
 
 <!--Form to edit user profile-->
   <div class="container">
-        <form method="post" action="updateprofile.php">
+        <form method="post" action="updateprofile.php" enctype='multipart/form-data'>
           <div class="form-group row">
             <label for="staticEmail" class="col-sm-2 col-form-label">Email:</label>
             <div class="form-group row">
@@ -83,7 +83,7 @@
           <div class="form-group row">
             <label for="inputPicture" class="col-sm-2 col-form-label">Profile Picture:</label>
               <div class="form-group row">
-                <input type="file" class="form-control" id="inputPicture" placeholder="Click to upload a file">
+                <input type="file" class="form-control" id="inputPicture" name='image' placeholder="Click to upload a file">
               </div>
           </div>
 
@@ -91,10 +91,10 @@
             <label for="profileBio">Bio:</label>
           </div>
               <div class="form-group row">
-                <textarea class="form-control" id="profileBio" rows="3" name="bio"></textarea>
+                <textarea class="form-control" id="profileBio" rows="3" name="bio"><?=$row['Bio']?></textarea>
               </div>
 
-          <button type="submit" class="btn btn-primary">Update Profile</button>
+          <button type="submit" name='submit' class="btn btn-primary">Update Profile</button>
         </form>
     </div>
 

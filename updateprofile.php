@@ -1,4 +1,4 @@
-<?php 
+<?php
     /*include('php-image-resize-master\lib\ImageResize.php');
     include('php-image-resize-master\lib\ImageResizeException.php');
     use \Gumlet\ImageResize;
@@ -6,9 +6,10 @@
 
     //Constants include DIRECTORY_SEPARATOR, PATHINFO_EXTENSION
     //Special methods - dirname, basename, join, getimagesize, pathinfo, in_array, move_upload_file
+
     
     //Function requires a file that is uploaded and an uploaded folder
-    function upload_pathway($uploaded_file, $upload_folder = 'Uploads'){
+    function upload_pathway($image_filename, $upload_folder = 'Uploads'){
         // gets name of directory
         $current_path = dirname(__FILE__); 
         $uploaded_file = basename($_FILES['image']['name']);
@@ -41,58 +42,31 @@
         return $valid_mime && $valid_filetype;
     }
 
-
-    //If the image is set
-    if(isset($_FILES['image'], $_POST['bio'])){
-
         require('connect.php');
         session_start();
         $level = $_SESSION['level'];
         $username = $_SESSION['username'];
         $name = $_SESSION['name'];
-        print_r($_POST);
-        
-        //Bio variable
+
         $bio = filter_input(INPUT_POST, 'bio', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $bio = TRIM($bio);
 
-        //Compare the temp vs new paths
-        $temp_path = $_FILES['image']['tmp_name'];
-        $uploaded_file = $_FILES['image']['name'];
-        $new_path = upload_pathway($uploaded_file);
-        $uploaded_file_extension = pathinfo($new_path, PATHINFO_EXTENSION);
-
-        if(validate_image($temp_path, $new_path)){
-            move_uploaded_file($temp_path, $new_path);
-
-            /*$image_med = new ImageResize("Uploads/{$uploaded_file}");
-            $image_med->resizeToWidth(400);
-            $image_med->save("Uploads/{$uploaded_file}_med.{$uploaded_file}");
-
-            $image_thumb = new ImageResize("Uploads/{$uploaded_file}");
-            $image_thumb->resizeToWidth(50);
-            $image_thumb->save("Uploads/{$uploaded_file}_thumb.{$uploaded_file_extension}");
-
-            $new_path_med = upload_pathway($image_med);
-            $new_path_thumb = upload_pathway($image_thumb);
-
-            move_uploaded_file($temp_path, $new_path_med);
-            move_uploaded_file($temp_path, $new_path_thumb);*/
-            
-            $query = "UPDATE users SET profilePicPath = :profilePicPath, Bio = :Bio WHERE username = :username";
-            $statement = $db->prepare($query);
-            $statement->bindValue(':profilePicPath', $new_path);
-            $statement->bindValue(':Bio', $bio);
-            $statement->bindValue(':username', $username);
-            if($statement->execute()){
+        $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
+    
+        if ($image_upload_detected) {
+            $image_filename       = $_FILES['image']['name'];
+            $temporary_image_path = $_FILES['image']['tmp_name'];
+            $new_image_path       = upload_pathway($image_filename);
+    
+            move_uploaded_file($temporary_image_path, $new_image_path);
+            if(isset($_POST['submit'])){
+                $query = "UPDATE users SET image = :image, Bio = :Bio WHERE username = :username";
+                $statement = $db->prepare($query);
+                $statement->bindValue(':image', $image_filename);
+                $statement->bindValue(':Bio', $bio);
+                $statement->bindValue(':username', $username);
+                $statement->execute();
                 header('Location: userindex.php');
             }
-            else{
-                ECHO 'Profile update failed, press the back button on your browser to re-try.';
-            }
         }
-        else {
-            ECHO "Invalid data: please press back on your browser to try again.";
-        }
-    }
 ?>
