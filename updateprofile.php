@@ -52,9 +52,12 @@
         $bio = TRIM($bio);
 
         $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
+        if(!$image_upload_detected){
+            ECHO "No file has been selected. Press the back button on your browser to retry.";
+        }
 
         //If a file upload is detected, start the upload process
-        if ($image_upload_detected) {
+        if ($image_upload_detected && isset($_POST['submit'])) {
             $image_filename = $_FILES['image']['name'];
             
             $temporary_image_path = $_FILES['image']['tmp_name'];
@@ -83,12 +86,11 @@
                 $thumbnail_image = "{$image_filename_no_extension}_thumb.{$uploaded_file_extension}";
 
                 //If the post button has been pressed
-                if(isset($_POST['submit'], $_FILES['image'], $_POST['bio'])){
+                if(isset($_POST['submit'], $_FILES['image'])){
                     
-                    $query = "UPDATE users SET image = :image, Bio = :Bio WHERE username = :username";
+                    $query = "UPDATE users SET image = :image WHERE username = :username";
                     $statement = $db->prepare($query);
                     $statement->bindValue(':image', $thumbnail_image);
-                    $statement->bindValue(':Bio', $bio);
                     $statement->bindValue(':username', $username);
                     $statement->execute();
 
@@ -108,16 +110,13 @@
                     header('Location: userindex.php');
                 }
 
-                //Only the bio is updated on the page, leave the image alone
-                elseif(isset($_POST['submit'], $_POST['bio'])){
-                    $query = "UPDATE users SET Bio = :Bio WHERE username = :username";
-                    $statement = $db->prepare($query);
-                    $statement->bindValue(':Bio', $bio);
-                    $statement->bindValue(':username', $username);
-                    $statement->execute();
+                else{
+                    ECHO "Please enter an image to upload as your profile picture. Press back on your browser to retry. ";
                 }
+
             }
             else{
-                ECHO "Invalid file extension. Press back on your browser to enter a valid file.";            }
+                ECHO "Invalid file extension. Press back on your browser to enter a valid file.";            
+            }
         }
 ?>

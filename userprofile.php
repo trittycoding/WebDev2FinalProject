@@ -72,26 +72,25 @@
                 <input type="text" readonly class="form-control-plaintext col-sm-3" id="staticEmail" value="<?=$firstlast?>@designbythegoat.com">
           </div>
 
+          <div class="form-group row">
+                <label for="staticName" class="col-sm-3 col-form-label">Name:</label>
+                    <input type="text" readonly class="form-control-plaintext col-sm-3" id="staticName" value="<?=$name?>"/>
+           </div>
+
             <div class="form-group row">
                 <label for="staticDpt" class="col-sm-3 col-form-label">Department:</label>
                     <input type="text" readonly class="form-control-plaintext col-sm-3" id="staticDpt" value="<?=$department?>"/>
            </div>
 
+           <div class="form-group row">
+                <label class="col-sm-4 col-form-label">Current Picture:</label>
+                <img class="rounded" src="Uploads/<?=$image?>" alt="<?=$image?>">
+            </div>
+
           <div class="form-group row">
             <label for="inputPicture" class="col-sm-3 col-form-label">Profile Picture:</label>
-              <div class="form-group row">
-                <input type="file" class="form-control" id="inputPicture" name='image' placeholder="Click to upload a file"/>
-                <img class="rounded float-right" src="Uploads/<?=$image?>" alt="<?=$image?>">
-              </div>
+                <input type="file" class="form-control col-sm-3" id="inputPicture" name='image' placeholder="Click to upload a file"/>
           </div>
-
-          <div class="form-group row">
-            <label class="col-sm-3 col-form-label" for="profileBio">Bio:</label>
-          </div>
-              <div class="form-group row">
-                <textarea class="form-control" id="profileBio" rows="3" name="bio"><?=$row['Bio']?></textarea>
-              </div>
-
           <button type="submit" name='submit' class="btn btn-primary">Update Profile</button>
         </form>
     </div>
