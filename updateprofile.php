@@ -82,23 +82,39 @@
                 move_uploaded_file($temporary_image_path, $new_image_path_thumb);
                 $thumbnail_image = "{$image_filename_no_extension}_thumb.{$uploaded_file_extension}";
 
-                if(isset($_POST['submit'])){
-                    //If the post button has been pressed
+                //If the post button has been pressed
+                if(isset($_POST['submit'], $_FILES['image'], $_POST['bio'])){
+                    
                     $query = "UPDATE users SET image = :image, Bio = :Bio WHERE username = :username";
                     $statement = $db->prepare($query);
                     $statement->bindValue(':image', $thumbnail_image);
                     $statement->bindValue(':Bio', $bio);
                     $statement->bindValue(':username', $username);
                     $statement->execute();
-                    session_destroy();
 
                     //Restart the session to display the picture properly
+                    $db_login = "SELECT * FROM users WHERE username = :username";
+                    $statement = $db->prepare($db_login);
+                    $statement->bindValue(':username', $username);
+                    $statement->execute();
+                    $credentials = $statement->fetch();
+                    session_destroy();
+
                     session_start();
                     $_SESSION['username'] = $credentials['username'];
                     $_SESSION['name'] = $credentials['firstName'].' '.$credentials['lastName'];
                     $_SESSION['level'] = $credentials['level'];
                     $_SESSION['image'] = $credentials['image'];
                     header('Location: userindex.php');
+                }
+
+                //Only the bio is updated on the page, leave the image alone
+                elseif(isset($_POST['submit'], $_POST['bio'])){
+                    $query = "UPDATE users SET Bio = :Bio WHERE username = :username";
+                    $statement = $db->prepare($query);
+                    $statement->bindValue(':Bio', $bio);
+                    $statement->bindValue(':username', $username);
+                    $statement->execute();
                 }
             }
             else{

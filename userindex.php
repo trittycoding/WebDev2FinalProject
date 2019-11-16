@@ -32,7 +32,11 @@
       <span class="navbar-text">
         Welcome to your homepage <?=$name?>
       </span>
-      <img class="img-tumbnail rounded mx-auto d-block" src="Uploads/<?=$image?>" alt="<?=$image?>">
+      <!--If there is no image for this user in the database, then do not display a photo-->
+      <?php if($image != null):?>
+        <img class="rounded float-right" src="Uploads/<?=$image?>" alt="<?=$image?>">
+      <?php endif?>
+
       <a class="nav-link" href="userprofile.php"><?=$username?> <span class="sr-only">(current)</span></a>
       <a class="btn btn-primary btn-med" href="logout.php">Log Out</a>
     </div>
@@ -101,7 +105,7 @@
 
   <!--Throw an error message if unexpected occurs-->
   <?php else:?>
-  <?='UNKNOWN ERROR ON USERINDEX.PHP'?>
+    <?='UNKNOWN ERROR ON USERINDEX.PHP'?>
   <?php endif?>
 
   <!-- Footer -->

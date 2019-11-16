@@ -5,6 +5,7 @@
     $level = $_SESSION['level'];
     $username = $_SESSION['username'];
     $name = $_SESSION['name'];
+    $image = $_SESSION['image'];
 
     $query = "SELECT * FROM users WHERE username = :username";
     $statement = $db->prepare($query);
@@ -64,31 +65,28 @@
 
 
 <!--Form to edit user profile-->
-  <div class="container">
+  <div class="container-fluid">
         <form method="post" action="updateprofile.php" enctype='multipart/form-data'>
           <div class="form-group row">
-            <label for="staticEmail" class="col-sm-2 col-form-label">Email:</label>
-            <div class="form-group row">
-              <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="<?=$firstlast?>@designbythegoat.com">
-            </div>
+            <label for="staticEmail" class="col-sm-3 col-form-label">Email:</label>
+                <input type="text" readonly class="form-control-plaintext col-sm-3" id="staticEmail" value="<?=$firstlast?>@designbythegoat.com">
           </div>
 
             <div class="form-group row">
-                <label for="staticDpt" class="col-sm-2 col-form-label">Department:</label>
-                <div class="form-group row">
-                    <input type="text" readonly class="form-control-plaintext" id="staticDpt" value="<?=$department?>">
-                </div>
-          </div>
+                <label for="staticDpt" class="col-sm-3 col-form-label">Department:</label>
+                    <input type="text" readonly class="form-control-plaintext col-sm-3" id="staticDpt" value="<?=$department?>"/>
+           </div>
 
           <div class="form-group row">
-            <label for="inputPicture" class="col-sm-2 col-form-label">Profile Picture:</label>
+            <label for="inputPicture" class="col-sm-3 col-form-label">Profile Picture:</label>
               <div class="form-group row">
-                <input type="file" class="form-control" id="inputPicture" name='image' placeholder="Click to upload a file">
+                <input type="file" class="form-control" id="inputPicture" name='image' placeholder="Click to upload a file"/>
+                <img class="rounded float-right" src="Uploads/<?=$image?>" alt="<?=$image?>">
               </div>
           </div>
 
           <div class="form-group row">
-            <label for="profileBio">Bio:</label>
+            <label class="col-sm-3 col-form-label" for="profileBio">Bio:</label>
           </div>
               <div class="form-group row">
                 <textarea class="form-control" id="profileBio" rows="3" name="bio"><?=$row['Bio']?></textarea>

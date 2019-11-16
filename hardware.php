@@ -70,6 +70,10 @@
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
             <h1>Created Hardware</h1>
+            <form class="form-inline md-form mr-auto mb-4" method="GET" action="search.php">
+              <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search_value">
+              <button class="btn btn-elegant btn-rounded btn-sm my-0" type="submit">Search</button>
+            </form>
         </div>
       </div>
     </div>
