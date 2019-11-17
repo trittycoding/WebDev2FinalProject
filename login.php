@@ -1,3 +1,4 @@
+
 <!--The Login page for CMS system-->
 <!DOCTYPE html>
 <html lang="en">
@@ -41,6 +42,8 @@
               <div class="col-12 col-md-8s mb-2 mb-md-0">
                 <input type="text" class="form-control form-control-lg" placeholder="Username" name='username'/>
                 <input type="password" class="form-control form-control-lg" placeholder="Password" name='password'/>
+                <img class="col-sm-3"src="captcha_code.php" alt="captcha">
+                <input type="text" class="form-control form-control-sm" name="captcha_entry" placeholder="CAPTCHA CODE"/>
                 <button type="submit" class="btn btn-block btn-lg btn-primary">Log In</button>
               </div>
             </div>

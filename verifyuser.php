@@ -1,11 +1,15 @@
 <?php
+    
     //Verifies the user identity and logs that person into the system.
     require('connect.php');
+    session_start();
+    $captcha_key = $_SESSION['captcha_code'];
 
     //Check to see if the password and username are set in POST
-    if(isset($_POST['password'], $_POST['username'])){
+    if(isset($_POST['password'], $_POST['username'], $_POST['captcha_entry'])){
         $username_input = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $password_input = $_POST['password'];
+        $captcha_entry = filter_input(INPUT_POST, 'captcha_entry', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         //If they are, query the database for the username
         $db_login = "SELECT * FROM users WHERE username = :username";
@@ -22,7 +26,8 @@
             $password_db = $credentials['password'];
 
             //If the passwords match, then create variables & assign to session
-            if(password_verify($password_input, $password_db)){
+            if(password_verify($password_input, $password_db) && $captcha_key == $captcha_entry){     
+                session_destroy();
                 session_start();
                 $_SESSION['username'] = $credentials['username'];
                 $_SESSION['name'] = $credentials['firstName'].' '.$credentials['lastName'];
@@ -41,17 +46,20 @@
                 header('Location: userindex.php');
             }
 
-            //Passwords do not match
-            else{
-                ECHO "The password entered do not match our records. Press the back button on your browser to re-try.";
+                //Passwords do not match
+                elseif(!password_verify($password_input, $password_db)){
+                    ECHO "The password entered do not match our records. Press the back button on your browser to re-try.";
+                }
+                else{
+                    ECHO "The captcha submission is not correct. Captcha submission must be correct to log-in. Press back on your browser to re-try.";
+                }
             }
-        }
 
-        //Account query doesn't return null but account status is set to inactive
-        elseif($credentials != null && $account_status == 'n'){
-            ECHO "<p> This account is currently deactivated. Contact your system administrator for reactivation. </p>";
-            ECHO "<p> Press the back button on your browser to log in with a different account. </p>";
-        }
+            //Account query doesn't return null but account status is set to inactive
+            elseif($credentials != null && $account_status == 'n'){
+                ECHO "<p> This account is currently deactivated. Contact your system administrator for reactivation. </p>";
+                ECHO "<p> Press the back button on your browser to log in with a different account. </p>";
+            }
 
         //Non-Existant Account
         else{

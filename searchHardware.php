@@ -1,6 +1,10 @@
 <?php
-    //
+    //connect to DB and pass over session variables
     require('connect.php');
+    session_start();
+    $level = $_SESSION['level'];
+    $username = $_SESSION['username'];
+    $name = $_SESSION['name'];
 
     //Current page number of results
     if(isset($_GET['page'])){
@@ -10,25 +14,51 @@
       $page = 1;
     }
 
-    $query = "SELECT * FROM hardware";
-    $statement = $db->prepare($query);
-    $statement->execute();
+    //If the searchbox and category are filled, search results
+    if(isset($_GET['category'], $_GET['search_value'])){
+        $category = filter_input(INPUT_GET, 'category', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $search_value = filter_input(INPUT_GET, 'search_value', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $search_value = '%'.$search_value.'%';
 
-    //Pagination variables
-    $page_limit = 5;
-    $result_count = $statement->rowCount();
-    $page_total = ceil($result_count/$page_limit);
-    $start_limit = ($page-1)*$page_limit;
 
-    //Executing query to determine the amount of data
-    $query2 = "SELECT * FROM hardware ORDER BY hardwareID LIMIT $start_limit, $page_limit";
-    $statement2 = $db->prepare($query2);
-    $statement2->execute();
+        //Get all rows
+        $query = "SELECT * FROM hardware WHERE LOWER($category) LIKE LOWER(:category)";
+        $statement = $db->prepare($query);
+        $statement->bindValue(':category', $search_value);
+        $statement->execute();
+    
+        /*//Pagination variables, use previous query to find row count
+        $page_limit = 5;
+        $result_count = $statement->rowCount();
+        $page_total = ceil($result_count/$page_limit);
+        $start_limit = ($page-1)*$page_limit;
+    
+        //Executing query to determine the amount of data
+        $query2 = "SELECT * FROM hardware ORDER BY hardwareID WHERE LOWER($category) LIKE LOWER(:category) LIMIT $start_limit, $page_limit";
+        $statement2 = $db->prepare($query2);
+        $statement2->bindValue(':category', $search_value);
+        $statement2->execute();
+        $row = $statement2->fetchAll();
+        var_dump($row);*/
+    }
 
-    session_start();
-    $level = $_SESSION['level'];
-    $username = $_SESSION['username'];
-    $name = $_SESSION['name'];
+    //If the searchbox isn't filled out, then get all results
+    else{
+        $query = "SELECT * FROM hardware";
+        $statement = $db->prepare($query);
+        $statement->execute();
+    
+        //Pagination variables
+        $page_limit = 5;
+        $result_count = $statement->rowCount();
+        $page_total = ceil($result_count/$page_limit);
+        $start_limit = ($page-1)*$page_limit;
+    
+        //Executing query to determine the amount of data
+        $query2 = "SELECT * FROM hardware ORDER BY hardwareID LIMIT $start_limit, $page_limit";
+        $statement2 = $db->prepare($query2);
+        $statement2->execute();
+    }
 
     //Query to populate the selectable search categories
     $query3 = "SELECT hardwareCategory FROM HardwareCategories";
@@ -76,7 +106,13 @@
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
             <h1>Created Hardware</h1>
             <form method="GET" action="searchHardware.php">
-              <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search_value"/>             
+            
+            <?php if(isset($_GET['search_value'])):?>
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search_value" value="<?=$_GET['search_value']?>"/>
+            <?php else:?>
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search_value"/>
+            <?php endif?>
+
                 <!--Searchbox-->
                   <div class="form-group">
                     <select class="form-control" name="category" id="category">
@@ -93,7 +129,7 @@
     </div>
   </header>
 
-<<table class="table table-dark">
+<table class="table table-dark">
     <tbody>
         <tr>
             <th>Catalog ID:</th>
@@ -104,22 +140,28 @@
             <th>Notes:</th>
             <th>Possession:</th>
         </tr>
-
-        <?php while($row = $statement2->fetch()):?>
-        <tr>
-          <?php if($level == 1):?>
-              <td><a href="edithardware.php?hardwareID=<?=$row['hardwareID']?>"><?=$row['hardwareID']?></a></td>
-          <?php else:?>
-              <td><?=$row['hardwareID']?></td>
-          <?php endif?>
-            <td><?=$row['serialNum']?></td>
-            <td><?=$row['make']?></td>
-            <td><?=$row['description']?></td>
-            <td><?=$row['cost']?></td>
-            <td><?=$row['notes']?></td>
-            <td><?=$row['assignedTo']?></td>
+        <?php if($statement->rowCount() != 0):?>
+          <?php while($row = $statement->fetch()):?>
+          <tr>
+            <?php if($level == 1):?>
+                <td><a href="edithardware.php?hardwareID=<?=$row['hardwareID']?>"><?=$row['hardwareID']?></a></td>
+            <?php else:?>
+                <td><?=$row['hardwareID']?></td>
+            <?php endif?>
+              <td><?=$row['serialNum']?></td>
+              <td><?=$row['make']?></td>
+              <td><?=$row['description']?></td>
+              <td><?=$row['cost']?></td>
+              <td><?=$row['notes']?></td>
+              <td><?=$row['assignedTo']?></td>
+          </tr>
+          <?php endwhile?>
+        <?php else:?>
+          <td>NO</td>
+              <td>RESULTS</td>
+              <td>FOUND</td>
         </tr>
-        <?php endwhile?>
+        <?php endif?>
     </tbody>
 </table>
 
@@ -133,13 +175,13 @@
       <li class="page-item enabled">
   <?php endif?>
 
-      <a class="page-link" href="hardware.php?page=<?=$page-1?>" aria-label="Previous">
+      <a class="page-link" href="searchHardware.php?page=<?=$page-1?>" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
     </li>
-    <li class="page-item active"><a class="page-link" href="users.php?page=<?=$page?>"></a><?=$page?></li>
-    <li class="page-item"><a class="page-link" href="users.php?page=<?=$page+1?>"></a><?=$page+1?></li>
+    <li class="page-item active"><a class="page-link" href="searchHardware.php?page=<?=$page?>"></a><?=$page?></li>
+    <li class="page-item"><a class="page-link" href="searchHardware.php?page=<?=$page+1?>"></a><?=$page+1?></li>
     <li class="page-item">
 
     <?php if($page == $page_total):?>
@@ -147,7 +189,7 @@
     <?php else:?>
         <li class="page-item enabled">
     <?php endif?>
-      <a class="page-link" href="hardware.php?page=<?=$page+1?>" aria-label="Next">
+      <a class="page-link" href="searchHardware.php?page=<?=$page+1?>" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
