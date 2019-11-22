@@ -1,45 +1,46 @@
 <?php
+    //Users table, only accessible by admin-level status
     require('connect.php');
 
-      //Current page number of results
-      if(isset($_GET['page'])){
-        $page = $_GET['page'];
-      }
-      else{
-        $page = 1;
-      }
+    //Error msg if the user does not have clearance to this page
+    $error = "You do not have clearance to view this page. Press back on your browser to return to the previous page.";
 
-    $query = "SELECT * FROM software";
+    //Current page number of results
+    if(isset($_GET['page'])){
+      $page = $_GET['page'];
+    }
+    else{
+      $page = 1;
+    }
+
+    //Query the db for all user records
+    $query = "SELECT * FROM users";
     $statement = $db->prepare($query);
     $statement->execute();
 
-    //Pagination variables
+    /*//Pagination variables
     $page_limit = 5;
     $result_count = $statement->rowCount();
     $page_total = ceil($result_count/$page_limit);
     $start_limit = ($page-1)*$page_limit;
 
     //Executing query to determine the amount of data
-    $query2 = "SELECT * FROM software ORDER BY softwareID LIMIT $start_limit, $page_limit";
+    $query2 = "SELECT * FROM users ORDER BY userID LIMIT $start_limit, $page_limit";
     $statement2 = $db->prepare($query2);
-    $statement2->execute();
+    $statement2->execute();*/
 
+    //Establish current session variables for the current logged in user.
     session_start();
     $level = $_SESSION['level'];
     $username = $_SESSION['username'];
     $name = $_SESSION['name'];
-
-    //Query to populate the selectable search categories
-    $query3 = "SELECT softwareCategory FROM SoftwareCategories";
-    $statement3 = $db->prepare($query3);
-    $statement3->execute();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Software</title>
+  <title>Users</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -65,6 +66,10 @@
     </div>
   </nav>
 
+  <?php if($level != 1):?>
+    <p><?=$error?></p>
+  <?php else:?>
+
   <!-- Masthead -->
   <header class="masthead text-white text-center">
     <div class="overlay"></div>
@@ -73,58 +78,35 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <h1>Created Software</h1>
-            <!--Searchbox-->
-            <form method="GET" action="searchSoftware.php">
-              <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search_value"/>
-                <div class="form-group">
-                  <select class="form-control" name="category" id="category">
-                    <?php while($category = $statement3->fetch()):?>
-                      <option class="dropdown-item" value="<?=$category['softwareCategory']?>"><?=strtoupper($category['softwareCategory'])?></option>
-                    <?php endwhile?>
-                  </select>
-                  </div>
-                  <button class="btn btn-primary" type="submit">Search</button>
-                  <button class="btn btn-warning" type="submit" formaction="software.php">Reset</button>
-            </form>
+            <h1>Created Users</h1>
         </div>
       </div>
     </div>
   </header>
 
-<<table class="table table-dark">
+<<table class="table table-hover table-dark">
     <tbody>
         <tr>
-            <th>Catalog ID:</th>
-            <th>License Key:</th>
-            <th>Version:</th>
-            <th>Publisher:</th>
-            <th>Description:</th>
-            <th>Subscription:</th>
-            <th>Cost:</th>
-            <th>Subscription Cycle:</th>
-            <th>Location:</th>
-            <th>Expiry:</th>
-            <th>Possession:</th>
+            <th>Username:</th>
+            <th>First Name:</th>
+            <th>Last Name:</th>
+            <th>Department:</th>
+            <th>Account Level:</th>
+            <th>Account Status</th>
+            <th>Previous Login:</th>
+            <th>Notes:</th>
         </tr>
 
         <?php while($row = $statement2->fetch()):?>
         <tr>
-          <?php if($level == 1):?>
-            <td><a href="editsoftware.php?softwareID=<?=$row['softwareID']?>"><?=$row['softwareID']?></a></td>
-          <?php else:?>
-              <td><?=$row['softwareID']?></td>
-          <?php endif?>
-            <td><?=$row['licenseKey']?></td>
-            <td><?=$row['version']?></td>
-            <td><?=$row['publisher']?></td>
-            <td><?=$row['description']?></td>
-            <td><?=$row['subscription']?></td>
-            <td><?=$row['cost']?></td>
-            <td><?=$row['subscriptionCycle']?></td>
-            <td><?=$row['location']?></td>
-            <td><?=$row['expiry']?></td>
-            <td><?=$row['assignedTo']?></td>
+            <td><a href="edituser.php?username=<?=$row['username']?>"><?=$row['username']?></td>
+            <td><?=$row['firstName']?></td>
+            <td><?=$row['lastName']?></td>
+            <td><?=$row['department']?></td>
+            <td><?=$row['level']?></td>
+            <td><?=$row['active']?></td>
+            <td><?=$row['lastLogin']?></td>
+            <td><?=$row['notes']?></td>
         </tr>
         <?php endwhile?>
     </tbody>
@@ -140,7 +122,7 @@
       <li class="page-item enabled">
   <?php endif?>
 
-      <a class="page-link" href="software.php?page=<?=$page-1?>" aria-label="Previous">
+      <a class="page-link" href="users.php?page=<?=$page-1?>" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -154,13 +136,15 @@
     <?php else:?>
         <li class="page-item enabled">
     <?php endif?>
-      <a class="page-link" href="software.php?page=<?=$page+1?>" aria-label="Next">
+      <a class="page-link" href="users.php?page=<?=$page+1?>" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
     </li>
   </ul>
 </nav>
+
+
 
   <!-- Footer -->
   <footer class="footer bg-light">
@@ -208,6 +192,7 @@
       </div>
     </div>
   </footer>
+  <?php endif?>
 
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>

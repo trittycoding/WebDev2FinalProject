@@ -1,5 +1,9 @@
 <?php
     require('connect.php');
+    session_start();
+    $level = $_SESSION['level'];
+    $username = $_SESSION['username'];
+    $name = $_SESSION['name'];
 
       //Current page number of results
       if(isset($_GET['page'])){
@@ -9,25 +13,47 @@
         $page = 1;
       }
 
-    $query = "SELECT * FROM software";
-    $statement = $db->prepare($query);
-    $statement->execute();
+    //If the searchbox and category are filled, search results
+    if(isset($_GET['category'], $_GET['search_value'])){
+        $category = filter_input(INPUT_GET, 'category', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $search_value = filter_input(INPUT_GET, 'search_value', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $search_value = '%'.$search_value.'%';
 
-    //Pagination variables
-    $page_limit = 5;
-    $result_count = $statement->rowCount();
-    $page_total = ceil($result_count/$page_limit);
-    $start_limit = ($page-1)*$page_limit;
+        $query = "SELECT * FROM software WHERE LOWER{$category} LIKE LOWER(:category)";
+        $statement = $db->prepare($query);
+        $statement->bindValue(':category', $search_value);
+        $statement->execute();
 
-    //Executing query to determine the amount of data
-    $query2 = "SELECT * FROM software ORDER BY softwareID LIMIT $start_limit, $page_limit";
-    $statement2 = $db->prepare($query2);
-    $statement2->execute();
+        //Pagination variables
+        $page_limit = 5;
+        $result_count = $statement->rowCount();
+        $page_total = ceil($result_count/$page_limit);
+        $start_limit = ($page-1)*$page_limit;
 
-    session_start();
-    $level = $_SESSION['level'];
-    $username = $_SESSION['username'];
-    $name = $_SESSION['name'];
+        //Executing query to determine the amount of data
+        $query2 = "SELECT * FROM software ORDER BY softwareID WHERE LOWER($category) LIKE LOWER(:category) LIMIT $start_limit, $page_limit";
+        $statement2 = $db->prepare($query2);
+        $statement2->bindValue(':category', $search_value);
+        $statement2->execute();
+    }
+
+    //If the searchbox isn't filled out, then get all results
+    else{
+        $query = "SELECT * FROM software";
+        $statement = $db->prepare($query);
+        $statement->execute();
+    
+        //Pagination variables
+        $page_limit = 5;
+        $result_count = $statement->rowCount();
+        $page_total = ceil($result_count/$page_limit);
+        $start_limit = ($page-1)*$page_limit;
+    
+        //Executing query to determine the amount of data
+        $query2 = "SELECT * FROM software ORDER BY softwareID LIMIT $start_limit, $page_limit";
+        $statement2 = $db->prepare($query2);
+        $statement2->execute();
+    }
 
     //Query to populate the selectable search categories
     $query3 = "SELECT softwareCategory FROM SoftwareCategories";
@@ -108,13 +134,14 @@
             <th>Possession:</th>
         </tr>
 
-        <?php while($row = $statement2->fetch()):?>
-        <tr>
-          <?php if($level == 1):?>
-            <td><a href="editsoftware.php?softwareID=<?=$row['softwareID']?>"><?=$row['softwareID']?></a></td>
-          <?php else:?>
-              <td><?=$row['softwareID']?></td>
-          <?php endif?>
+        <?php if($statement->rowCount() != 0):?>
+        <?php while($row = $statement->fetch()):?>
+          <tr>
+            <?php if($level == 1):?>
+                <td><a href="edithardware.php?hardwareID=<?=$row['hardwareID']?>"><?=$row['hardwareID']?></a></td>
+            <?php else:?>
+                <td><?=$row['hardwareID']?></td>
+            <?php endif?>
             <td><?=$row['licenseKey']?></td>
             <td><?=$row['version']?></td>
             <td><?=$row['publisher']?></td>
@@ -125,8 +152,14 @@
             <td><?=$row['location']?></td>
             <td><?=$row['expiry']?></td>
             <td><?=$row['assignedTo']?></td>
+          </tr>
+          <?php endwhile?>
+        <?php else:?>
+          <td>NO</td>
+              <td>RESULTS</td>
+              <td>FOUND</td>
         </tr>
-        <?php endwhile?>
+        <?php endif?>
     </tbody>
 </table>
 
@@ -140,13 +173,13 @@
       <li class="page-item enabled">
   <?php endif?>
 
-      <a class="page-link" href="software.php?page=<?=$page-1?>" aria-label="Previous">
+      <a class="page-link" href="searchSoftware.php?page=<?=$page-1?>" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
     </li>
-    <li class="page-item active"><a class="page-link" href="users.php?page=<?=$page?>"></a><?=$page?></li>
-    <li class="page-item"><a class="page-link" href="users.php?page=<?=$page+1?>"></a><?=$page+1?></li>
+    <li class="page-item active"><a class="page-link" href="searchSoftware.php?page=<?=$page?>"></a><?=$page?></li>
+    <li class="page-item"><a class="page-link" href="searchSoftware.php?page=<?=$page+1?>"></a><?=$page+1?></li>
     <li class="page-item">
 
     <?php if($page == $page_total):?>
@@ -154,7 +187,7 @@
     <?php else:?>
         <li class="page-item enabled">
     <?php endif?>
-      <a class="page-link" href="software.php?page=<?=$page+1?>" aria-label="Next">
+      <a class="page-link" href="searchSoftware.php?page=<?=$page+1?>" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>

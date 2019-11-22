@@ -80,10 +80,11 @@
                 //Resize image to thumbnail size and save to the folder
                 $image_thumb = new ImageResize("Uploads/{$image_filename}");
                 $image_thumb->resizeToWidth(50);
-                $image_thumb->save("Uploads/{$image_filename_no_extension}_thumb.{$uploaded_file_extension}");
+                $timestamp = date('Y-m-d h:i:s');
+                $image_thumb->save("Uploads/{$image_filename_no_extension}_thumb_{$timestamp}.{$uploaded_file_extension}");
                 $new_image_path_thumb = upload_pathway($image_thumb);
                 move_uploaded_file($temporary_image_path, $new_image_path_thumb);
-                $thumbnail_image = "{$image_filename_no_extension}_thumb.{$uploaded_file_extension}";
+                $thumbnail_image = "{$image_filename_no_extension}_thumb_{$timestamp}.{$uploaded_file_extension}";
 
                 //If the post button has been pressed
                 if(isset($_POST['submit'], $_FILES['image'])){

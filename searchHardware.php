@@ -27,19 +27,17 @@
         $statement->bindValue(':category', $search_value);
         $statement->execute();
     
-        /*//Pagination variables, use previous query to find row count
+        //Pagination variables, use previous query to find row count
         $page_limit = 5;
         $result_count = $statement->rowCount();
         $page_total = ceil($result_count/$page_limit);
         $start_limit = ($page-1)*$page_limit;
     
-        //Executing query to determine the amount of data
+        /*//Executing query to determine the amount of data
         $query2 = "SELECT * FROM hardware ORDER BY hardwareID WHERE LOWER($category) LIKE LOWER(:category) LIMIT $start_limit, $page_limit";
         $statement2 = $db->prepare($query2);
         $statement2->bindValue(':category', $search_value);
-        $statement2->execute();
-        $row = $statement2->fetchAll();
-        var_dump($row);*/
+        $statement2->execute();*/
     }
 
     //If the searchbox isn't filled out, then get all results
