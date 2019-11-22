@@ -14,17 +14,18 @@
       }
 
     //If the searchbox and category are filled, search results
-    if(isset($_GET['category'], $_GET['search_value'])){
+    if(isset($_GET['category'], $_GET['search_value']) && $_GET['search_value'] != ""){
         $category = filter_input(INPUT_GET, 'category', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $search_value = filter_input(INPUT_GET, 'search_value', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $search_value = '%'.$search_value.'%';
 
-        $query = "SELECT * FROM software WHERE LOWER{$category} LIKE LOWER(:category)";
+        //Get all Rows
+        $query = "SELECT * FROM software WHERE LOWER($category) LIKE LOWER(:category)";
         $statement = $db->prepare($query);
         $statement->bindValue(':category', $search_value);
         $statement->execute();
 
-        //Pagination variables
+        /*//Pagination variables
         $page_limit = 5;
         $result_count = $statement->rowCount();
         $page_total = ceil($result_count/$page_limit);
@@ -34,7 +35,7 @@
         $query2 = "SELECT * FROM software ORDER BY softwareID WHERE LOWER($category) LIKE LOWER(:category) LIMIT $start_limit, $page_limit";
         $statement2 = $db->prepare($query2);
         $statement2->bindValue(':category', $search_value);
-        $statement2->execute();
+        $statement2->execute();*/
     }
 
     //If the searchbox isn't filled out, then get all results
@@ -50,9 +51,9 @@
         $start_limit = ($page-1)*$page_limit;
     
         //Executing query to determine the amount of data
-        $query2 = "SELECT * FROM software ORDER BY softwareID LIMIT $start_limit, $page_limit";
-        $statement2 = $db->prepare($query2);
-        $statement2->execute();
+        $query = "SELECT * FROM software ORDER BY softwareID LIMIT $start_limit, $page_limit";
+        $statement = $db->prepare($query);
+        $statement->execute();
     }
 
     //Query to populate the selectable search categories
@@ -138,9 +139,9 @@
         <?php while($row = $statement->fetch()):?>
           <tr>
             <?php if($level == 1):?>
-                <td><a href="edithardware.php?hardwareID=<?=$row['hardwareID']?>"><?=$row['hardwareID']?></a></td>
+                <td><a href="editsoftware.php?softwareID=<?=$row['softwareID']?>"><?=$row['softwareID']?></a></td>
             <?php else:?>
-                <td><?=$row['hardwareID']?></td>
+                <td><?=$row['softwareID']?></td>
             <?php endif?>
             <td><?=$row['licenseKey']?></td>
             <td><?=$row['version']?></td>
