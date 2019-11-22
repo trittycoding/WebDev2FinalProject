@@ -43,13 +43,13 @@
           <h1 class="mb-5">Professional Software, At Reasonable Prices</h1>
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-          <form>
+          <form method="POST" action="quoteEmail.php">
               <h3>Contact Us For a Quote Today!</h3>
             <div class="form-row">
               <div class="col-12 col-md-8s mb-2 mb-md-0">
-                <input type="email" class="form-control form-control-lg" placeholder="Enter your email...">
-                <input type="text" class="form-control form-control-lg" placeholder="Name...">
-                <textarea rows="4" cols="50" class="form-control form-control-lg" placeholder="Enter text here..."></textarea>
+                <input type="email" class="form-control form-control-lg" placeholder="Enter your email..." name="email">
+                <input type="text" class="form-control form-control-lg" placeholder="Name..." name="name">
+                <textarea rows="4" cols="50" class="form-control form-control-lg" placeholder="Enter text here..." name="text"></textarea>
                 <button type="submit" class="btn btn-block btn-lg btn-primary">Go!</button>
               </div>
             </div>
