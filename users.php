@@ -130,7 +130,7 @@
     </div>
   </header>
 
-<<table class="table table-hover table-dark">
+<table class="table table-hover table-dark">
     <tbody>
         <tr>
             <th>Username:</th>

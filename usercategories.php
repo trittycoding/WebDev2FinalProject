@@ -1,9 +1,23 @@
 <?php
+  require('connect.php');
   session_start();
   $level = $_SESSION['level'];
   $username = $_SESSION['username'];
   $name = $_SESSION['name'];
-  $image = $_SESSION['image'];
+
+  $error = "You do not have clearance to view this page. Press back on your browser to return to the previous page.";
+
+  /*System catalog query to get columns: SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA` = 'GOAT_CMS' AND `TABLE_NAME` = 'users';*/
+
+  //Populate dropdowns dynamically with the columns from the database
+  $query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'GOAT_CMS' AND TABLE_NAME = 'users'";
+  $statement = $db->prepare($query);
+  $statement->execute();
+
+  //Query to populate the categories in the table
+  $query2 = "SELECT * FROM UserCategories";
+  $statement2 = $db->prepare($query2);
+  $statement2->execute();
 ?>
 
 <!DOCTYPE html>
@@ -11,7 +25,7 @@
 	<head>
 		<meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Homepage</title>
+  <title>User Categories</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -26,24 +40,21 @@
 
 <body>
       <!-- Navigation -->
-  <nav class="navbar navbar-light bg-light static-top">
+      <nav class="navbar navbar-light bg-light static-top">
     <div class="container">
       <a class="navbar-brand" href="userindex.php">Design By The GOAT</a>
       <span class="navbar-text">
         Welcome to your homepage <?=$name?>
       </span>
-      <!--If there is no image for this user in the database, then do not display a photo-->
-      <?php if($image != null):?>
-        <img class="rounded float-right" src="Uploads/<?=$image?>" alt="<?=$image?>">
-      <?php endif?>
-
-      <a class="nav-link" href="userprofile.php"><?=$username?> <span class="sr-only">(current)</span></a>
+      <a class="nav-link" href="#"><?=$username?> <span class="sr-only">(current)</span></a>
       <a class="btn btn-primary btn-med" href="logout.php">Log Out</a>
     </div>
   </nav>
 
-  <!--Admin homepage-->
-  <?php if($level == 1):?>
+  <?php if($level != 1):?>
+    <p><?=$error?></p>
+  <?php else:?>
+
   <!-- Masthead -->
   <header class="masthead text-white text-center">
     <div class="overlay"></div>
@@ -52,61 +63,40 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <div class="col">
-              <a class="btn btn-primary btn-lg btn-block btn-lg btn-block" href="createuser.php" role="button">Create User Entry</a>
-              <a class="btn btn-primary btn-lg btn-block btn-lg btn-block" href="users.php" role="button">View User Catalog</a>
-              <a class="btn btn-primary btn-lg btn-block" href="createsoftware.php" role="button">Create Software Entry</a>
-              <a class="btn btn-primary btn-lg btn-block" href="software.php" role="button">View Software Catalog</a>
-              <a class="btn btn-primary btn-lg btn-block" href="createhardware.php" role="button">Create Hardware Entry</a>
-              <a class="btn btn-primary btn-lg btn-block" href="hardware.php" role="button">View Hardware Catalog</a>
-              <a class="btn btn-primary btn-lg btn-block" href="searchcategories.php" role="button">Search Categories</a>
+        <form method="post" action="insertusercategory.php">
+            <div class="form-row">
+              <div class="col-12 col-md-4s mb-2 mb-md-0">
+                <h3>User Categories: Add</h3>
+                    <label for="category">Category:</label>
+                    <select class="form-control" name="category" id="category">
+                      <?php while($category = $statement->fetch()):?>
+                        <option class="dropdown-item" value="<?=$category['COLUMN_NAME']?>"><?=strtoupper($category['COLUMN_NAME'])?></option>
+                      <?php endwhile?>
+                    </select>
+                    <button class="btn btn-block btn-lg btn-primary" type="submit">Create Entry</button>
+              </div>
             </div>
+          </form>
         </div>
       </div>
     </div>
   </header>
 
-  <!--Manager's homepage-->
-  <?php elseif($level == 2):?>
-    <header class="masthead text-white text-center">
-    <div class="overlay"></div>
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-9 mx-auto">
-        </div>
-        <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <div class="col">
-              <a class="btn btn-primary btn-lg btn-block" href="createsoftware.php" role="button">Create Software Entry</a>
-              <a class="btn btn-primary btn-lg btn-block" href="createhardware.php" role="button">Create Hardware Entry</a>
-              <a class="btn btn-primary btn-lg btn-block" href="software.php" role="button">View Software Catalog</a>
-              <a class="btn btn-primary btn-lg btn-block" href="hardware.php" role="button">View Hardware Catalog</a>
-            </div>
-        </div>
-      </div>
-    </div>
-  </header>
+  <<table class="table table-hover table-dark">
+    <tbody>
+        <tr>
+            <th>CategoryID:</th>
+            <th>User Category:</th>
+        </tr>
 
-  <!--Regular user homepage-->
-  <?php elseif($level == 3):?>
-    <header class="masthead text-white text-center">
-    <div class="overlay"></div>
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-9 mx-auto">
-        </div>
-        <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <div class="col">
-              <a class="btn btn-primary btn-lg btn-block" href="software.php" role="button">View Software Catalog</a>
-              <a class="btn btn-primary btn-lg btn-block" href="hardware.php" role="button">View Hardware Catalog</a>
-            </div>
-        </div>
-      </div>
-    </div>
-    </header>
-
-  <!--Throw an error message if unexpected occurs-->
-  <?php else:?>
-    <?='UNKNOWN ERROR ON USERINDEX.PHP'?>
+        <?php while($row = $statement2->fetch()):?>
+        <tr>
+            <td><a href="editusercategory.php?categoryID=<?=$row['categoryID']?>"><?=$row['categoryID']?></td>
+            <td><?=$row['userCategory']?></td>
+        </tr>
+        <?php endwhile?>
+    </tbody>
+</table>
   <?php endif?>
 
   <!-- Footer -->
