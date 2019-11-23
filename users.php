@@ -34,6 +34,12 @@
     $level = $_SESSION['level'];
     $username = $_SESSION['username'];
     $name = $_SESSION['name'];
+
+    //Query to populate the selectable search categories
+    $query3 = "SELECT userCategory FROM UserCategories";
+    $statement3 = $db->prepare($query3);
+    $statement3->execute();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -79,6 +85,46 @@
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
             <h1>Created Users</h1>
+          <!--Searchbox-->
+          <form method="GET" action="searchUsers.php">
+          <h4>Search by keyword:</h4>
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search_value"/>
+            <div class="form-group">
+              <select class="form-control" name="category" id="category">
+                <?php while($category = $statement3->fetch()):?>
+                  <option class="dropdown-item" value="<?=$category['userCategory']?>"><?=strtoupper($category['userCategory'])?></option>
+                <?php endwhile?>
+              </select>
+              <!--Form Buttons-->
+              <button class="btn btn-primary" type="submit">Search</button>
+              <button class="btn btn-warning" type="submit" formaction="users.php">Reset</button>
+              </div>
+            </form>
+
+            <!--Sortbox-->
+            <form method="GET" action="sortUsers.php">                
+            <h4> Or Sort By Column:</h4>
+              <div class="form-group">
+                <select class="form-control" name="category" id="category">
+                  <option value="username">USERNAME</option>
+                  <option value="firstName">FIRSTNAME</option>
+                  <option value="lastName">LASTNAME</option>
+                  <option value="department">DEPARTMENT</option>
+                  <option value="level">LEVEL</option>
+                  <option value="active">ACTIVE</option>
+                  <option value="lastLogin">LASTLOGIN</option>
+                  <option value="notes">NOTES</option>
+                </select>
+                <select class="form-control" name="direction" id="direction">
+                  <option class="dropdown-item" value="asc">Asc</option>
+                  <option class="dropdown-item" value="desc">Desc</option>
+                </select>
+              <button class="btn btn-primary" type="submit">Sort</button>
+              <button class="btn btn-warning" type="submit" formaction="users.php">Reset</button>
+              </div>
+            </form>
+
+          </div>
         </div>
       </div>
     </div>

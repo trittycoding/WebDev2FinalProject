@@ -9,18 +9,18 @@
         $page = 1;
       }
 
-    $query = "SELECT * FROM software";
-    $statement = $db->prepare($query);
-    $statement->execute();
-
-    //Pagination variables
-    $page_limit = 5;
-    $result_count = $statement->rowCount();
-    $page_total = ceil($result_count/$page_limit);
-    $start_limit = ($page-1)*$page_limit;
+    //Sortable elements
+    if(!isset($_GET['direction'], $_GET['category'])){
+        $direction = 'asc';
+        $sort_category = 'username';
+    }
+    else{
+        $direction = $_GET['direction'];
+        $sort_category = $_GET['category'];
+    }
 
     //Executing query to determine the amount of data
-    $query2 = "SELECT * FROM software ORDER BY softwareID LIMIT $start_limit, $page_limit";
+    $query2 = "SELECT * FROM software ORDER BY $sort_category $direction";
     $statement2 = $db->prepare($query2);
     $statement2->execute();
 
@@ -76,7 +76,6 @@
             <h1>Created Software</h1>
             <!--Searchbox-->
             <form method="GET" action="searchSoftware.php">
-            <h4>Search By Keyword:</h4>
               <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search_value"/>
                 <div class="form-group">
                   <select class="form-control" name="category" id="category">
@@ -84,9 +83,9 @@
                       <option class="dropdown-item" value="<?=$category['softwareCategory']?>"><?=strtoupper($category['softwareCategory'])?></option>
                     <?php endwhile?>
                   </select>
+                  </div>
                   <button class="btn btn-primary" type="submit">Search</button>
                   <button class="btn btn-warning" type="submit" formaction="software.php">Reset</button>
-                  </div>
             </form>
 
             <!--Sortbox-->
@@ -113,6 +112,7 @@
               <button class="btn btn-warning" type="submit" formaction="software.php">Reset</button>
               </div>
             </form>
+
         </div>
       </div>
     </div>
@@ -155,38 +155,6 @@
         <?php endwhile?>
     </tbody>
 </table>
-
-<!--Pagination implementation-->
-<nav aria-label="Page navigation">
-  <ul class="pagination">
-
-  <?php if($page == 1):?>
-      <li class="page-item disabled">
-  <?php else:?>
-      <li class="page-item enabled">
-  <?php endif?>
-
-      <a class="page-link" href="software.php?page=<?=$page-1?>" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-        <span class="sr-only">Previous</span>
-      </a>
-    </li>
-    <li class="page-item active"><a class="page-link" href="users.php?page=<?=$page?>"></a><?=$page?></li>
-    <li class="page-item"><a class="page-link" href="users.php?page=<?=$page+1?>"></a><?=$page+1?></li>
-    <li class="page-item">
-
-    <?php if($page == $page_total):?>
-      <li class="page-item disabled">
-    <?php else:?>
-        <li class="page-item enabled">
-    <?php endif?>
-      <a class="page-link" href="software.php?page=<?=$page+1?>" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-        <span class="sr-only">Next</span>
-      </a>
-    </li>
-  </ul>
-</nav>
 
   <!-- Footer -->
   <footer class="footer bg-light">

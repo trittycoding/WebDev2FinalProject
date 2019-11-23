@@ -1,45 +1,52 @@
 <?php
+    //Users table, only accessible by admin-level status
     require('connect.php');
 
-      //Current page number of results
-      if(isset($_GET['page'])){
-        $page = $_GET['page'];
-      }
-      else{
-        $page = 1;
-      }
+    //Error msg if the user does not have clearance to this page
+    $error = "You do not have clearance to view this page. Press back on your browser to return to the previous page.";
 
-    $query = "SELECT * FROM software";
-    $statement = $db->prepare($query);
-    $statement->execute();
+    //Sortable elements
+    if(!isset($_GET['direction'], $_GET['category'])){
+        $direction = 'asc';
+        $sort_category = 'username';
+    }
+    else{
+        $direction = $_GET['direction'];
+        $sort_category = $_GET['category'];
+    }
 
-    //Pagination variables
-    $page_limit = 5;
-    $result_count = $statement->rowCount();
-    $page_total = ceil($result_count/$page_limit);
-    $start_limit = ($page-1)*$page_limit;
+
+    //Current page number of results
+    if(isset($_GET['page'])){
+      $page = $_GET['page'];
+    }
+    else{
+      $page = 1;
+    }
 
     //Executing query to determine the amount of data
-    $query2 = "SELECT * FROM software ORDER BY softwareID LIMIT $start_limit, $page_limit";
+    $query2 = "SELECT * FROM users ORDER BY $sort_category $direction";
     $statement2 = $db->prepare($query2);
     $statement2->execute();
 
+    //Establish current session variables for the current logged in user.
     session_start();
     $level = $_SESSION['level'];
     $username = $_SESSION['username'];
     $name = $_SESSION['name'];
 
     //Query to populate the selectable search categories
-    $query3 = "SELECT softwareCategory FROM SoftwareCategories";
+    $query3 = "SELECT userCategory FROM UserCategories";
     $statement3 = $db->prepare($query3);
     $statement3->execute();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Software</title>
+  <title>Users</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -65,6 +72,10 @@
     </div>
   </nav>
 
+  <?php if($level != 1):?>
+    <p><?=$error?></p>
+  <?php else:?>
+
   <!-- Masthead -->
   <header class="masthead text-white text-center">
     <div class="overlay"></div>
@@ -73,120 +84,79 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <h1>Created Software</h1>
-            <!--Searchbox-->
-            <form method="GET" action="searchSoftware.php">
-            <h4>Search By Keyword:</h4>
-              <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search_value"/>
-                <div class="form-group">
-                  <select class="form-control" name="category" id="category">
-                    <?php while($category = $statement3->fetch()):?>
-                      <option class="dropdown-item" value="<?=$category['softwareCategory']?>"><?=strtoupper($category['softwareCategory'])?></option>
-                    <?php endwhile?>
-                  </select>
-                  <button class="btn btn-primary" type="submit">Search</button>
-                  <button class="btn btn-warning" type="submit" formaction="software.php">Reset</button>
-                  </div>
+            <h1>Created Users</h1>
+          <!--Searchbox-->
+          <form method="GET" action="searchUsers.php">
+          <h4>Search by keyword:</h4>
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" name="search_value"/>
+            <div class="form-group">
+              <select class="form-control" name="category" id="category">
+                <?php while($category = $statement3->fetch()):?>
+                  <option class="dropdown-item" value="<?=$category['userCategory']?>"><?=strtoupper($category['userCategory'])?></option>
+                <?php endwhile?>
+              </select>
+              <!--Form Buttons-->
+              <button class="btn btn-primary" type="submit">Search</button>
+              <button class="btn btn-warning" type="submit" formaction="users.php">Reset</button>
+              </div>
             </form>
 
             <!--Sortbox-->
-            <form method="GET" action="sortSoftware.php">                
+            <form method="GET" action="sortUsers.php">                
             <h4> Or Sort By Column:</h4>
               <div class="form-group">
                 <select class="form-control" name="category" id="category">
-                  <option value="licenseKey">LICENSE KEY</option>
-                  <option value="version">VERSION</option>
-                  <option value="publisher">PUBLISHER</option>
-                  <option value="description">DESCRIPTION</option>
-                  <option value="subscription">SUBSCRIPTION</option>
-                  <option value="cost">COST</option>
-                  <option value="subscriptionCycle">SUBSCRIPTION CYCLE</option>
-                  <option value="location">LOCATION</option>
-                  <option value="expiry">EXPIRY</option>
-                  <option value="assignedTo">POSSESSION</option>
+                  <option value="username">USERNAME</option>
+                  <option value="firstName">FIRSTNAME</option>
+                  <option value="lastName">LASTNAME</option>
+                  <option value="department">DEPARTMENT</option>
+                  <option value="level">LEVEL</option>
+                  <option value="active">ACTIVE</option>
+                  <option value="lastLogin">LASTLOGIN</option>
+                  <option value="notes">NOTES</option>
                 </select>
                 <select class="form-control" name="direction" id="direction">
                   <option class="dropdown-item" value="asc">Asc</option>
                   <option class="dropdown-item" value="desc">Desc</option>
                 </select>
               <button class="btn btn-primary" type="submit">Sort</button>
-              <button class="btn btn-warning" type="submit" formaction="software.php">Reset</button>
+              <button class="btn btn-warning" type="submit" formaction="users.php">Reset</button>
               </div>
             </form>
+
+          </div>
         </div>
       </div>
     </div>
   </header>
 
-<<table class="table table-dark">
+<<table class="table table-hover table-dark">
     <tbody>
         <tr>
-            <th>Catalog ID:</th>
-            <th>License Key:</th>
-            <th>Version:</th>
-            <th>Publisher:</th>
-            <th>Description:</th>
-            <th>Subscription:</th>
-            <th>Cost:</th>
-            <th>Subscription Cycle:</th>
-            <th>Location:</th>
-            <th>Expiry:</th>
-            <th>Possession:</th>
+            <th>Username:</th>
+            <th>First Name:</th>
+            <th>Last Name:</th>
+            <th>Department:</th>
+            <th>Account Level:</th>
+            <th>Account Status</th>
+            <th>Previous Login:</th>
+            <th>Notes:</th>
         </tr>
 
         <?php while($row = $statement2->fetch()):?>
         <tr>
-          <?php if($level == 1):?>
-            <td><a href="editsoftware.php?softwareID=<?=$row['softwareID']?>"><?=$row['softwareID']?></a></td>
-          <?php else:?>
-              <td><?=$row['softwareID']?></td>
-          <?php endif?>
-            <td><?=$row['licenseKey']?></td>
-            <td><?=$row['version']?></td>
-            <td><?=$row['publisher']?></td>
-            <td><?=$row['description']?></td>
-            <td><?=$row['subscription']?></td>
-            <td><?=$row['cost']?></td>
-            <td><?=$row['subscriptionCycle']?></td>
-            <td><?=$row['location']?></td>
-            <td><?=$row['expiry']?></td>
-            <td><?=$row['assignedTo']?></td>
+            <td><a href="edituser.php?username=<?=$row['username']?>"><?=$row['username']?></td>
+            <td><?=$row['firstName']?></td>
+            <td><?=$row['lastName']?></td>
+            <td><?=$row['department']?></td>
+            <td><?=$row['level']?></td>
+            <td><?=$row['active']?></td>
+            <td><?=$row['lastLogin']?></td>
+            <td><?=$row['notes']?></td>
         </tr>
         <?php endwhile?>
     </tbody>
 </table>
-
-<!--Pagination implementation-->
-<nav aria-label="Page navigation">
-  <ul class="pagination">
-
-  <?php if($page == 1):?>
-      <li class="page-item disabled">
-  <?php else:?>
-      <li class="page-item enabled">
-  <?php endif?>
-
-      <a class="page-link" href="software.php?page=<?=$page-1?>" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-        <span class="sr-only">Previous</span>
-      </a>
-    </li>
-    <li class="page-item active"><a class="page-link" href="users.php?page=<?=$page?>"></a><?=$page?></li>
-    <li class="page-item"><a class="page-link" href="users.php?page=<?=$page+1?>"></a><?=$page+1?></li>
-    <li class="page-item">
-
-    <?php if($page == $page_total):?>
-      <li class="page-item disabled">
-    <?php else:?>
-        <li class="page-item enabled">
-    <?php endif?>
-      <a class="page-link" href="software.php?page=<?=$page+1?>" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-        <span class="sr-only">Next</span>
-      </a>
-    </li>
-  </ul>
-</nav>
 
   <!-- Footer -->
   <footer class="footer bg-light">
@@ -234,6 +204,7 @@
       </div>
     </div>
   </footer>
+  <?php endif?>
 
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>

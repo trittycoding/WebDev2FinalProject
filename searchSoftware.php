@@ -25,17 +25,6 @@
         $statement->bindValue(':category', $search_value);
         $statement->execute();
 
-        /*//Pagination variables
-        $page_limit = 5;
-        $result_count = $statement->rowCount();
-        $page_total = ceil($result_count/$page_limit);
-        $start_limit = ($page-1)*$page_limit;
-
-        //Executing query to determine the amount of data
-        $query2 = "SELECT * FROM software ORDER BY softwareID WHERE LOWER($category) LIKE LOWER(:category) LIMIT $start_limit, $page_limit";
-        $statement2 = $db->prepare($query2);
-        $statement2->bindValue(':category', $search_value);
-        $statement2->execute();*/
     }
 
     //If the searchbox isn't filled out, then get all results
@@ -114,6 +103,32 @@
                   <button class="btn btn-primary" type="submit">Search</button>
                   <button class="btn btn-warning" type="submit" formaction="software.php">Reset</button>
             </form>
+
+            <!--Sortbox-->
+            <form method="GET" action="sortSoftware.php">                
+            <h4> Or Sort By Column:</h4>
+              <div class="form-group">
+                <select class="form-control" name="category" id="category">
+                  <option value="licenseKey">LICENSE KEY</option>
+                  <option value="version">VERSION</option>
+                  <option value="publisher">PUBLISHER</option>
+                  <option value="description">DESCRIPTION</option>
+                  <option value="subscription">SUBSCRIPTION</option>
+                  <option value="cost">COST</option>
+                  <option value="subscriptionCycle">SUBSCRIPTION CYCLE</option>
+                  <option value="location">LOCATION</option>
+                  <option value="expiry">EXPIRY</option>
+                  <option value="assignedTo">POSSESSION</option>
+                </select>
+                <select class="form-control" name="direction" id="direction">
+                  <option class="dropdown-item" value="asc">Asc</option>
+                  <option class="dropdown-item" value="desc">Desc</option>
+                </select>
+              <button class="btn btn-primary" type="submit">Sort</button>
+              <button class="btn btn-warning" type="submit" formaction="software.php">Reset</button>
+              </div>
+            </form>
+
         </div>
       </div>
     </div>
@@ -163,38 +178,6 @@
         <?php endif?>
     </tbody>
 </table>
-
-<!--Pagination implementation-->
-<nav aria-label="Page navigation">
-  <ul class="pagination">
-
-  <?php if($page == 1):?>
-      <li class="page-item disabled">
-  <?php else:?>
-      <li class="page-item enabled">
-  <?php endif?>
-
-      <a class="page-link" href="searchSoftware.php?page=<?=$page-1?>" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-        <span class="sr-only">Previous</span>
-      </a>
-    </li>
-    <li class="page-item active"><a class="page-link" href="searchSoftware.php?page=<?=$page?>"></a><?=$page?></li>
-    <li class="page-item"><a class="page-link" href="searchSoftware.php?page=<?=$page+1?>"></a><?=$page+1?></li>
-    <li class="page-item">
-
-    <?php if($page == $page_total):?>
-      <li class="page-item disabled">
-    <?php else:?>
-        <li class="page-item enabled">
-    <?php endif?>
-      <a class="page-link" href="searchSoftware.php?page=<?=$page+1?>" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-        <span class="sr-only">Next</span>
-      </a>
-    </li>
-  </ul>
-</nav>
 
   <!-- Footer -->
   <footer class="footer bg-light">
