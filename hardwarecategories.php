@@ -1,48 +1,31 @@
 <?php
-    //
-    require('connect.php');
+  require('connect.php');
+  session_start();
+  $level = $_SESSION['level'];
+  $username = $_SESSION['username'];
+  $name = $_SESSION['name'];
 
-    //Current page number of results
-    if(isset($_GET['page'])){
-      $page = $_GET['page'];
-    }
-    else{
-      $page = 1;
-    }
+  $error = "You do not have clearance to view this page. Press back on your browser to return to the previous page.";
 
-    $error = "You do not have clearance to view this page. Press back on your browser to return to the previous page.";
+  /*System catalog query to get columns: SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA` = 'GOAT_CMS' AND `TABLE_NAME` = 'users';*/
 
-    $query = "SELECT * FROM hardware";
-    $statement = $db->prepare($query);
-    $statement->execute();
+  //Populate dropdowns dynamically with the columns from the database
+  $query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'GOAT_CMS' AND TABLE_NAME = 'hardware'";
+  $statement = $db->prepare($query);
+  $statement->execute();
 
-    //Pagination variables
-    $page_limit = 5;
-    $result_count = $statement->rowCount();
-    $page_total = ceil($result_count/$page_limit);
-    $start_limit = ($page-1)*$page_limit;
-
-    //Executing query to determine the amount of data
-    $query2 = "SELECT * FROM hardware ORDER BY hardwareID LIMIT $start_limit, $page_limit";
-    $statement2 = $db->prepare($query2);
-    $statement2->execute();
-
-    session_start();
-    $level = $_SESSION['level'];
-    $username = $_SESSION['username'];
-    $name = $_SESSION['name'];
-
-    //Query to populate the selectable search categories
-    $query3 = "SELECT hardwareCategory FROM HardwareCategories";
-    $statement3 = $db->prepare($query3);
-    $statement3->execute();
+  //Query to populate the categories in the table
+  $query2 = "SELECT * FROM HardwareCategories";
+  $statement2 = $db->prepare($query2);
+  $statement2->execute();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Hardware</title>
+  <title>Hardware Categories</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -63,7 +46,7 @@
       <span class="navbar-text">
         Welcome to your homepage <?=$name?>
       </span>
-      <a class="nav-link" href="userprofile.php"><?=$username?> <span class="sr-only">(current)</span></a>
+      <a class="nav-link" href="#"><?=$username?> <span class="sr-only">(current)</span></a>
       <a class="btn btn-primary btn-med" href="logout.php">Log Out</a>
     </div>
   </nav>
@@ -71,6 +54,7 @@
   <?php if($level != 1):?>
     <p><?=$error?></p>
   <?php else:?>
+
   <!-- Masthead -->
   <header class="masthead text-white text-center">
     <div class="overlay"></div>
@@ -79,17 +63,41 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-            <div class="col">
-              <a class="btn btn-primary btn-lg btn-block btn-lg btn-block" href="usercategories.php" role="button">User Search Categories</a>
-              <a class="btn btn-primary btn-lg btn-block btn-lg btn-block" href="hardwarecategories.php" role="button">Hardware Search Categories</a>
-              <a class="btn btn-primary btn-lg btn-block" href="softwarecategories.php" role="button">Software Search Categories</a>
+        <form method="post" action="inserthardwarecategory.php">
+            <div class="form-row">
+              <div class="col-12 col-md-4s mb-2 mb-md-0">
+                <h3>Hardware Categories: Add</h3>
+                    <label for="category">Category:</label>
+                    <select class="form-control" name="category" id="category">
+                      <?php while($category = $statement->fetch()):?>
+                        <option class="dropdown-item" value="<?=$category['COLUMN_NAME']?>"><?=strtoupper($category['COLUMN_NAME'])?></option>
+                      <?php endwhile?>
+                    </select>
+                    <button class="btn btn-block btn-lg btn-primary" type="submit">Create Entry</button>
+              </div>
             </div>
+          </form>
         </div>
       </div>
     </div>
   </header>
-  <?php endif?>
 
+  <<table class="table table-hover table-dark">
+    <tbody>
+        <tr>
+            <th>CategoryID:</th>
+            <th>Hardware Category:</th>
+        </tr>
+
+        <?php while($row = $statement2->fetch()):?>
+        <tr>
+            <td><a href="edithardwarecategory.php?categoryID=<?=$row['categoryID']?>"><?=$row['categoryID']?></td>
+            <td><?=$row['hardwareCategory']?></td>
+        </tr>
+        <?php endwhile?>
+    </tbody>
+</table>
+  <?php endif?>
 
   <!-- Footer -->
   <footer class="footer bg-light">
