@@ -33,6 +33,7 @@
     $query3 = "SELECT softwareCategory FROM SoftwareCategories";
     $statement3 = $db->prepare($query3);
     $statement3->execute();
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -133,26 +134,39 @@
             <th>Expiry:</th>
             <th>Possession:</th>
         </tr>
-
-        <?php while($row = $statement2->fetch()):?>
-        <tr>
-          <?php if($level == 1):?>
-            <td><a href="editsoftware.php?softwareID=<?=$row['softwareID']?>"><?=$row['softwareID']?></a></td>
-          <?php else:?>
-              <td><?=$row['softwareID']?></td>
-          <?php endif?>
-            <td><?=$row['licenseKey']?></td>
-            <td><?=$row['version']?></td>
-            <td><?=$row['publisher']?></td>
-            <td><?=$row['description']?></td>
-            <td><?=$row['subscription']?></td>
-            <td><?=$row['cost']?></td>
-            <td><?=$row['subscriptionCycle']?></td>
-            <td><?=$row['location']?></td>
-            <td><?=$row['expiry']?></td>
-            <td><?=$row['assignedTo']?></td>
-        </tr>
-        <?php endwhile?>
+  
+          <?php while($row = $statement2->fetch()):?>
+            <tr>
+              <?php if($level == 1):?>
+                <td><a href="editsoftware.php?softwareID=<?=$row['softwareID']?>"><?=$row['softwareID']?></a></td>
+              <?php else:?>
+                  <td><?=$row['softwareID']?></td>
+              <?php endif?>
+                <td><?=$row['licenseKey']?></td>
+                <td><?=$row['version']?></td>
+                <td><?=$row['publisher']?></td>
+                <td><?=$row['description']?></td>
+                <td><?=$row['subscription']?></td>
+                <td><?=$row['cost']?></td>
+                <td><?=$row['subscriptionCycle']?></td>
+                <td><?=$row['location']?></td>
+                <td><?=$row['expiry']?></td>
+                <!--If the assignedTo column isn't null, fill in username of posessor-->
+                <?php if($row['assignedTo'] !=  null):?>
+                <?php 
+                    //Querying to get all usernames assigned to items
+                    $query4 = "SELECT username FROM users JOIN software ON userID = assignedTo WHERE assignedTo = :assignedTo";
+                    $statement4 = $db->prepare($query4);
+                    $statement4->bindValue(':assignedTo', $row['assignedTo']);
+                    $statement4->execute();
+                    $row2 = $statement4->fetch();
+                ?>
+                  <td><?=$row2['username']?></td>
+                    <?php else:?>
+                      <td><a href="signoutsoftware.php?item=<?=$row['softwareID']?>">Available</a></td>
+                <?php endif?> 
+            </tr>
+          <?php endwhile?>
     </tbody>
 </table>
 

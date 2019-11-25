@@ -139,8 +139,21 @@
             <td><?=$row['description']?></td>
             <td><?=$row['cost']?></td>
             <td><?=$row['notes']?></td>
-            <td><?=$row['assignedTo']?></td>
-        </tr>
+                <!--If the assignedTo column isn't null, fill in username of posessor-->
+                <?php if($row['assignedTo'] !=  null):?>
+                  <?php 
+                      //Querying to get all usernames assigned to items
+                      $query4 = "SELECT username FROM users JOIN hardware ON userID = assignedTo WHERE assignedTo = :assignedTo";
+                      $statement4 = $db->prepare($query4);
+                      $statement4->bindValue(':assignedTo', $row['assignedTo']);
+                      $statement4->execute();
+                      $row2 = $statement4->fetch();
+                  ?>
+                    <td><?=$row2['username']?></td>
+                      <?php else:?>
+                        <td><a href="signoutsoftware.php?item=<?=$row['softwareID']?>">Available</a></td>
+                  <?php endif?>
+          </tr>
         <?php endwhile?>
     </tbody>
 </table>
