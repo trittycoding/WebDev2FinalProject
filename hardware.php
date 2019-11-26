@@ -9,7 +9,7 @@
     else{
       $page = 1;
     }
-
+    
     $query = "SELECT * FROM hardware";
     $statement = $db->prepare($query);
     $statement->execute();
@@ -149,9 +149,9 @@
                       $statement4->execute();
                       $row2 = $statement4->fetch();
                   ?>
-                    <td><?=$row2['username']?></td>
+                    <td><a href="signouthardware.php?item=<?=$row['hardwareID']?>"><?=$row2['username']?></a></td>
                       <?php else:?>
-                        <td><a href="signoutsoftware.php?item=<?=$row['softwareID']?>">Available</a></td>
+                        <td><a class="text-warning" href="signouthardware.php?item=<?=$row['hardwareID']?>">Available</a></td>
                   <?php endif?>
           </tr>
         <?php endwhile?>

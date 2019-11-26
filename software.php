@@ -8,7 +8,8 @@
       else{
         $page = 1;
       }
-
+    
+    //Query to get all results
     $query = "SELECT * FROM software";
     $statement = $db->prepare($query);
     $statement->execute();
@@ -161,9 +162,9 @@
                     $statement4->execute();
                     $row2 = $statement4->fetch();
                 ?>
-                  <td><?=$row2['username']?></td>
+                  <td><a href="signoutsoftware.php?item=<?=$row['softwareID']?>"><?=$row2['username']?></a></td>
                     <?php else:?>
-                      <td><a href="signoutsoftware.php?item=<?=$row['softwareID']?>">Available</a></td>
+                      <td><a class="text-warning" href="signoutsoftware.php?item=<?=$row['softwareID']?>">Available</a></td>
                 <?php endif?> 
             </tr>
           <?php endwhile?>
