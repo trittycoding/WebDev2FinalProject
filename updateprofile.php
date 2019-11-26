@@ -52,9 +52,6 @@
         $bio = TRIM($bio);
 
         $image_upload_detected = isset($_FILES['image']) && ($_FILES['image']['error'] === 0);
-        if(!$image_upload_detected){
-            ECHO "No file has been selected. Press the back button on your browser to retry.";
-        }
 
         //If a file upload is detected, start the upload process
         if ($image_upload_detected && isset($_POST['submit'])) {
@@ -73,8 +70,10 @@
                 $image_filename_no_extension = substr($image_filename, 0, strlen($image_filename)-4);
             }
             
-            //Moving the files to the upload folder if passing validation
-            if(validate_image($temporary_image_path, $new_image_path) 
+            //If Bio and image are set
+            if(isset($_POST['submit'], $_FILES['image'], $_POST['bio'])){
+                //Moving the files to the upload folder if passing validation
+                if(validate_image($temporary_image_path, $new_image_path) 
                 && move_uploaded_file($temporary_image_path, $new_image_path)){
                     
                 //Resize image to thumbnail size and save to the folder
@@ -86,38 +85,97 @@
                 move_uploaded_file($temporary_image_path, $new_image_path_thumb);
                 $thumbnail_image = "{$image_filename_no_extension}_thumb_{$timestamp}.{$uploaded_file_extension}";
 
-                //If the post button has been pressed
-                if(isset($_POST['submit'], $_FILES['image'])){
-                    
-                    $query = "UPDATE users SET image = :image WHERE username = :username";
-                    $statement = $db->prepare($query);
-                    $statement->bindValue(':image', $thumbnail_image);
-                    $statement->bindValue(':username', $username);
-                    $statement->execute();
+                $bio = filter_input(INPUT_POST, 'bio', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $query = "UPDATE users SET image = :image, bio = :bio WHERE username = :username";
+                $statement = $db->prepare($query);
+                $statement->bindValue(':image', $thumbnail_image);
+                $statement->bindValue(':bio', $bio);
+                $statement->bindValue(':username', $username);
+                $statement->execute();
 
-                    //Restart the session to display the picture properly
-                    $db_login = "SELECT * FROM users WHERE username = :username";
-                    $statement = $db->prepare($db_login);
-                    $statement->bindValue(':username', $username);
-                    $statement->execute();
-                    $credentials = $statement->fetch();
-                    session_destroy();
+                //Restart the session to display the picture properly
+                $db_login = "SELECT * FROM users WHERE username = :username";
+                $statement = $db->prepare($db_login);
+                $statement->bindValue(':username', $username);
+                $statement->execute();
+                $credentials = $statement->fetch();
+                session_destroy();
 
-                    session_start();
-                    $_SESSION['username'] = $credentials['username'];
-                    $_SESSION['name'] = $credentials['firstName'].' '.$credentials['lastName'];
-                    $_SESSION['level'] = $credentials['level'];
-                    $_SESSION['image'] = $credentials['image'];
-                    header('Location: userindex.php');
+                session_start();
+                $_SESSION['username'] = $credentials['username'];
+                $_SESSION['name'] = $credentials['firstName'].' '.$credentials['lastName'];
+                $_SESSION['level'] = $credentials['level'];
+                $_SESSION['image'] = $credentials['image'];
+                header('Location: userindex.php');
                 }
 
                 else{
-                    ECHO "Please enter an image to upload as your profile picture. Press back on your browser to retry. ";
+                    ECHO "Invalid file extension. Press back on your browser to enter a valid file.";            
                 }
 
             }
-            else{
-                ECHO "Invalid file extension. Press back on your browser to enter a valid file.";            
+
+            //Only image is set
+            elseif(isset($_POST['submit'], $_FILES['image'])){
+                //Moving the files to the upload folder if passing validation
+                if(validate_image($temporary_image_path, $new_image_path) 
+                && move_uploaded_file($temporary_image_path, $new_image_path)){
+                    
+                //Resize image to thumbnail size and save to the folder
+                $image_thumb = new ImageResize("Uploads/{$image_filename}");
+                $image_thumb->resizeToWidth(50);
+                $timestamp = date('Y-m-d h:i:s');
+                $image_thumb->save("Uploads/{$image_filename_no_extension}_thumb_{$timestamp}.{$uploaded_file_extension}");
+                $new_image_path_thumb = upload_pathway($image_thumb);
+                move_uploaded_file($temporary_image_path, $new_image_path_thumb);
+                $thumbnail_image = "{$image_filename_no_extension}_thumb_{$timestamp}.{$uploaded_file_extension}";
+
+                $bio = filter_input(INPUT_POST, 'bio', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+                $query = "UPDATE users SET image = :image, bio = :bio WHERE username = :username";
+                $statement = $db->prepare($query);
+                $statement->bindValue(':image', $thumbnail_image);
+                $statement->bindValue(':bio', $bio);
+                $statement->bindValue(':username', $username);
+                $statement->execute();
+
+                //Restart the session to display the picture properly
+                $db_login = "SELECT * FROM users WHERE username = :username";
+                $statement = $db->prepare($db_login);
+                $statement->bindValue(':username', $username);
+                $statement->execute();
+                $credentials = $statement->fetch();
+                session_destroy();
+
+                session_start();
+                $_SESSION['username'] = $credentials['username'];
+                $_SESSION['name'] = $credentials['firstName'].' '.$credentials['lastName'];
+                $_SESSION['level'] = $credentials['level'];
+                $_SESSION['image'] = $credentials['image'];
+                header('Location: userindex.php');
+                }
+
+                else{
+                    ECHO "Invalid file extension. Press back on your browser to enter a valid file.";            
+                }
             }
+        }
+
+        //Only bio is set
+        elseif(isset($_POST['submit'], $_POST['bio']) && $image_upload_detected == false){
+            $bio = filter_input(INPUT_POST, 'bio', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $query = "UPDATE users SET bio = :bio WHERE username = :username";
+            $statement = $db->prepare($query);
+            $statement->bindValue(':bio', $bio);
+            $statement->bindValue(':username', $username);
+            if($statement->execute()){
+                header('Location:userindex.php');
+            }
+            else{
+                ECHO "Update Failed, invalid bio data - Press back on your browser to retry.";
+            }
+        }
+
+        else{
+            ECHO "Unknown Error. Press back on your browser to retry.";            
         }
 ?>

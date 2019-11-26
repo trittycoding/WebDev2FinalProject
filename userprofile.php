@@ -89,7 +89,12 @@
 
           <div class="form-group row">
             <label for="inputPicture" class="col-sm-3 col-form-label">Profile Picture:</label>
-                <input type="file" class="form-control col-sm-3" id="inputPicture" name='image' placeholder="Click to upload a file"/>
+            <input type="file" class="form-control col-sm-3" id="inputPicture" name='image' placeholder="Click to upload a file"/>
+          </div>
+
+          <div class="form-group row">
+            <label for="bio" class="col-sm-3 col-form-label">Bio:</label>
+            <textarea cols="100" rows="4" name="bio"><?=$row['bio']?></textarea>
           </div>
           <button type="submit" name='submit' class="btn btn-primary">Update Profile</button>
         </form>
