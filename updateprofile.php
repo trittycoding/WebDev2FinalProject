@@ -160,7 +160,7 @@
             }
         }
 
-        //Only bio is set
+        //Only bio is set and no file upload is detected
         elseif(isset($_POST['submit'], $_POST['bio']) && $image_upload_detected == false){
             $bio = filter_input(INPUT_POST, 'bio', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             $query = "UPDATE users SET bio = :bio WHERE username = :username";
@@ -175,7 +175,8 @@
             }
         }
 
+        //No image or bio updated
         else{
-            ECHO "Unknown Error. Press back on your browser to retry.";            
+            header('Location:userindex.php');            
         }
 ?>
