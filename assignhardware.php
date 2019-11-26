@@ -10,7 +10,7 @@
         }
         else{      
             require('connect.php');
-            $query = "UPDATE Hardware SET assignedTo = :assignedTo WHERE hardware = (:hardwareID)";
+            $query = "UPDATE Hardware SET assignedTo = :assignedTo WHERE hardwareID = :hardwareID";
             $statement = $db->prepare($query);
             $statement->bindValue(':hardwareID', $hardwareID, PDO::PARAM_INT);
             $statement->bindValue(':assignedTo', $assignedTo, PDO::PARAM_INT);

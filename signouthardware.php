@@ -70,7 +70,7 @@
         <div class="col-xl-9 mx-auto">
         </div>
         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-        <form method="post" action="assignhardware.php?hardwareID=<?=$row['hardwareID']?>&assignedTo=<?=$assignedTo?>">
+        <form method="POST" action="assignhardware.php?hardwareID=<?=$row['hardwareID']?>&assignedTo=<?=$assignedTo?>">
             <div class="form-row">
               <div class="col-12 col-md-4s mb-2 mb-md-0">
                 <h3>Sign Out Hardware</h3>
