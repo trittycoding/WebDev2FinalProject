@@ -8,6 +8,7 @@
 
     //GET value for username passed through
     $username_passed = $_GET['username'];
+    $username_passed = filter_var($username_passed, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
     $query = "SELECT * FROM users WHERE username = :username";
     $statement = $db->prepare($query);

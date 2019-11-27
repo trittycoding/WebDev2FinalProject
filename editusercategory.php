@@ -8,6 +8,8 @@
 
     //GET value for username passed through
     $categoryID = $_GET['categoryID'];
+    $categoryID = filter_var($categoryID, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+    $categoryID = filter_var($categoryID, FILTER_VALIDATE_INT);
 
     $query = "SELECT * FROM UserCategories WHERE categoryID = :categoryID";
     $statement = $db->prepare($query);

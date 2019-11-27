@@ -150,7 +150,19 @@
             <td><?=$row['subscriptionCycle']?></td>
             <td><?=$row['location']?></td>
             <td><?=$row['expiry']?></td>
-            <td><?=$row['assignedTo']?></td>
+            <?php if($row['assignedTo'] !=  null):?>
+                <?php 
+                    //Querying to get all usernames assigned to items
+                    $query4 = "SELECT username FROM users JOIN software ON userID = assignedTo WHERE assignedTo = :assignedTo";
+                    $statement4 = $db->prepare($query4);
+                    $statement4->bindValue(':assignedTo', $row['assignedTo']);
+                    $statement4->execute();
+                    $row2 = $statement4->fetch();
+                ?>
+                  <td><a href="signoutsoftware.php?item=<?=$row['softwareID']?>"><?=$row2['username']?></a></td>
+                    <?php else:?>
+                      <td><a class="text-warning" href="signoutsoftware.php?item=<?=$row['softwareID']?>">Available</a></td>
+                <?php endif?>
         </tr>
         <?php endwhile?>
     </tbody>
